@@ -47,7 +47,7 @@ const services = [
   // {
   //   icon: <Target className="w-8 h-8 text-white" />,
   //   title: "Custom Solutions",
-  //   description: "Need something unique? We’ll build a solar plan for it.",
+  //   description: "Need something unique? We'll build a solar plan for it.",
   //   color: "from-purple-600 to-pink-500",
   // },
   {
@@ -69,11 +69,11 @@ const fadeInUp = {
 
 export default function ServiceSection() {
   return (
-    <section className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 text-gray-900">
+    <section className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
       <div className="max-w-6xl mx-auto text-center">
-        <h2 className="text-4xl font-bold text-gray-900 mb-12">
+        <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 transition-colors duration-300">
           Our{" "}
-          <span className="text-[--color-home-warm-900]">
+          <span className=" text-orange-400 dark:text-orange-400">
             Solar Services
           </span>
         </h2>
@@ -87,23 +87,23 @@ export default function ServiceSection() {
               whileInView="visible"
               viewport={{ once: true }}
               variants={fadeInUp}
-              className={`relative overflow-hidden rounded-2xl p-6 shadow-md bg-white/60 backdrop-blur-sm border border-white/20 hover:shadow-lg transition-transform hover:scale-[1.02] group`}
+              className={`relative overflow-hidden rounded-2xl p-6 shadow-md bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 hover:shadow-lg dark:hover:shadow-slate-900/20 transition-all duration-300 hover:scale-[1.02] group`}
             >
               {/* Softer decorative ring */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-xl opacity-40 pointer-events-none z-0" />
+              <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-white/20 dark:from-slate-600/20 to-transparent rounded-full blur-xl opacity-40 pointer-events-none z-0" />
               {/* Softer glow on hover */}
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/0 to-[rgba(255,255,255,0.08)] opacity-0 group-hover:opacity-80 transition-opacity duration-300 z-0" />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/0 to-[rgba(255,255,255,0.08)] dark:from-slate-700/0 dark:to-slate-600/10 opacity-0 group-hover:opacity-80 transition-opacity duration-300 z-0" />
               <div className="flex items-center gap-3 relative z-10">
                 <div
-                  className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${service.color} shadow-md mb-3 border-2 border-white/20 group-hover:scale-105 transition-transform duration-300`}
+                  className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${service.color} shadow-md mb-3 border-2 border-white/20 dark:border-slate-700/30 group-hover:scale-105 transition-transform duration-300`}
                 >
                   {service.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-home-warm-900 mb-2 drop-shadow-xs">
+                <h3 className="text-xl font-semibold text-orange-800 dark:text-orange-200 mb-2 drop-shadow-xs transition-colors duration-300">
                   {service.title}
                 </h3>
               </div>
-              <p className="text-gray-600 text-base leading-relaxed mt-1 relative z-10">
+              <p className="text-gray-600 dark:text-gray-300 text-base leading-relaxed mt-1 relative z-10 transition-colors duration-300">
                 {service.description}
               </p>
             </motion.div>
