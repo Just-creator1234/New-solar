@@ -1,15 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-
-// Dynamically import with SSR disabled
-const LiveMap = dynamic(() => import("@/components/LiveMap"), {
-  ssr: false,
-});
-
 import NavbarNew from "@/components/NavbarNew";
-
+import React, { useState } from "react";
 import {
   Mail,
   Phone,
@@ -21,9 +13,14 @@ import {
   Clock,
   Award,
   Shield,
-  Import,
 } from "lucide-react";
+
+import dynamic from "next/dynamic";
 import Footer from "@/components/Footer";
+
+const LiveMap = dynamic(() => import("@/components/LiveMap"), {
+  ssr: false,
+});
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -108,7 +105,7 @@ const ContactPage = () => {
 
   const FloatingElement = ({ className, style, delay = 0 }) => (
     <div
-      className={`absolute rounded-lg opacity-20 ${className}`}
+      className={`absolute rounded-lg opacity-20 dark:opacity-30 ${className}`}
       style={{
         ...style,
         animation: `gentle-bounce 2s ease-in-out infinite ${delay}s`,
@@ -125,18 +122,11 @@ const ContactPage = () => {
         <Icon className="w-6 h-6 text-white" />
       </div>
       <div className="min-w-0 flex-1">
-        <h3
-          className="font-semibold text-lg"
-          style={{ color: "var(--color-sky-light-800)" }}
-        >
+        <h3 className="font-semibold text-lg text-sky-800 dark:text-slate-100">
           {title}
         </h3>
         {details.map((detail, idx) => (
-          <p
-            key={idx}
-            className="break-words"
-            style={{ color: "var(--color-sky-light-600)" }}
-          >
+          <p key={idx} className="break-words text-sky-600 dark:text-slate-300">
             {detail}
           </p>
         ))}
@@ -157,10 +147,7 @@ const ContactPage = () => {
     className = "",
   }) => (
     <div className={className}>
-      <label
-        className="block text-sm font-semibold mb-2"
-        style={{ color: "var(--color-sky-light-800)" }}
-      >
+      <label className="block text-sm font-semibold mb-2 text-sky-800 dark:text-slate-200">
         {label} {required && "*"}
       </label>
       {type === "textarea" ? (
@@ -170,8 +157,7 @@ const ContactPage = () => {
           onChange={onChange}
           required={required}
           rows={rows}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-sunlink-orange-500 focus:outline-none transition-colors resize-none"
-          style={{ backgroundColor: "var(--color-comfort-cream)" }}
+          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors resize-none bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           placeholder={placeholder}
         />
       ) : type === "select" ? (
@@ -179,8 +165,7 @@ const ContactPage = () => {
           name={name}
           value={value}
           onChange={onChange}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-sunlink-orange-500 focus:outline-none transition-colors"
-          style={{ backgroundColor: "var(--color-comfort-cream)" }}
+          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
         >
           {options?.map((option) => (
             <option key={option.value} value={option.value}>
@@ -195,8 +180,7 @@ const ContactPage = () => {
           value={value}
           onChange={onChange}
           required={required}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-sunlink-orange-500 focus:outline-none transition-colors"
-          style={{ backgroundColor: "var(--color-comfort-cream)" }}
+          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
           placeholder={placeholder}
         />
       )}
@@ -205,33 +189,24 @@ const ContactPage = () => {
 
   const SuccessMessage = () => (
     <div className="text-center py-12">
-      <CheckCircle
-        className="w-16 h-16 mx-auto mb-4"
-        style={{ color: "var(--color-trust-green)" }}
-      />
-      <h3
-        className="text-xl font-bold mb-2"
-        style={{ color: "var(--color-sky-light-800)" }}
-      >
+      <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
+      <h3 className="text-xl font-bold mb-2 text-sky-800 dark:text-slate-100">
         Message Sent Successfully!
       </h3>
-      <p style={{ color: "var(--color-sky-light-600)" }}>
+      <p className="text-sky-600 dark:text-slate-300">
         We'll get back to you within 24 hours.
       </p>
     </div>
   );
 
   return (
-    <div
-      className="min-h-screen relative overflow-hidden"
-      style={{ backgroundColor: "var(--color-comfort-cream)" }}
-    >
+    <div className="min-h-screen relative overflow-hidden bg-amber-50 dark:bg-slate-900 transition-colors duration-300">
       <NavbarNew />
       {/* Animated Background Elements */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Light Rays */}
         <div
-          className="absolute top-0 left-1/4 w-96 h-96 opacity-30"
+          className="absolute top-0 left-1/4 w-96 h-96 opacity-30 dark:opacity-20"
           style={{
             background: `linear-gradient(45deg, transparent, var(--color-sunlink-orange-200), transparent)`,
             animation: "light-ray-1 8s ease-in-out infinite",
@@ -239,7 +214,7 @@ const ContactPage = () => {
           }}
         />
         <div
-          className="absolute top-0 right-1/4 w-80 h-80 opacity-25"
+          className="absolute top-0 right-1/4 w-80 h-80 opacity-25 dark:opacity-15"
           style={{
             background: `linear-gradient(-12deg, transparent, var(--color-sunlink-blue-200), transparent)`,
             animation: "light-ray-2 10s ease-in-out infinite",
@@ -249,45 +224,35 @@ const ContactPage = () => {
 
         {/* Floating Solar Panels */}
         <FloatingElement
-          className="top-20 left-10 w-16 h-12"
-          style={{ backgroundColor: "var(--color-sunlink-blue-700)" }}
+          className="top-20 left-10 w-16 h-12 bg-slate-700 dark:bg-slate-600"
           delay={0}
         />
         <FloatingElement
-          className="top-40 right-20 w-12 h-8"
-          style={{ backgroundColor: "var(--color-sunlink-orange-600)" }}
+          className="top-40 right-20 w-12 h-8 bg-orange-600 dark:bg-orange-500"
           delay={1}
         />
         <FloatingElement
-          className="bottom-32 left-20 w-14 h-10"
-          style={{ backgroundColor: "var(--color-trust-green)" }}
+          className="bottom-32 left-20 w-14 h-10 bg-green-600 dark:bg-green-500"
           delay={2}
         />
       </div>
 
       {/* Header */}
-      <header className="relative z-10 pt-12 pb-6 mt-15">
+      <header className="relative z-10 pt-12 pb-6 mt-20">
         <div className="container mx-auto px-6">
           <div className="text-center">
             <div className="flex items-center justify-center mb-4">
               <Sun
-                className="w-12 h-12 mr-3"
+                className="w-12 h-12 mr-3 text-orange-500 dark:text-orange-400"
                 style={{
-                  color: "var(--color-sunlink-orange-500)",
                   animation: "spin-slow 4s linear infinite",
                 }}
               />
-              <h1
-                className="text-4xl md:text-5xl font-bold"
-                style={{ color: "var(--color-sky-light-800)" }}
-              >
+              <h1 className="text-4xl md:text-5xl font-bold text-sky-800 dark:text-slate-100">
                 Get In Touch
               </h1>
             </div>
-            <p
-              className="text-xl max-w-2xl mx-auto"
-              style={{ color: "var(--color-sky-light-600)" }}
-            >
+            <p className="text-xl max-w-2xl mx-auto text-sky-600 dark:text-slate-300">
               Ready to harness the power of the sun? Let's discuss your solar
               energy solutions.
             </p>
@@ -300,14 +265,8 @@ const ContactPage = () => {
         <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Information */}
           <div className="space-y-8">
-            <div
-              className="rounded-2xl p-8 shadow-lg backdrop-blur-sm"
-              style={{ backgroundColor: "var(--color-sunlink-orange-50)" }}
-            >
-              <h2
-                className="text-2xl font-bold mb-6"
-                style={{ color: "var(--color-sky-light-800)" }}
-              >
+            <div className="rounded-2xl p-8 shadow-lg backdrop-blur-sm bg-orange-50 dark:bg-slate-800/90 border border-orange-100 dark:border-slate-700">
+              <h2 className="text-2xl font-bold mb-6 text-sky-800 dark:text-slate-100">
                 Contact Information
               </h2>
 
@@ -319,28 +278,16 @@ const ContactPage = () => {
             </div>
 
             {/* Why Choose Us */}
-            <div
-              className="rounded-2xl p-8 shadow-lg backdrop-blur-sm"
-              style={{ backgroundColor: "var(--color-sunlink-blue-50)" }}
-            >
-              <h2
-                className="text-2xl font-bold mb-6"
-                style={{ color: "var(--color-sky-light-800)" }}
-              >
+            <div className="rounded-2xl p-8 shadow-lg backdrop-blur-sm bg-blue-50 dark:bg-slate-800/90 border border-blue-100 dark:border-slate-700">
+              <h2 className="text-2xl font-bold mb-6 text-sky-800 dark:text-slate-100">
                 Why Choose Sunlink?
               </h2>
 
               <div className="space-y-4">
                 {features.map((feature, idx) => (
                   <div key={idx} className="flex items-center space-x-3">
-                    <feature.icon
-                      className="w-5 h-5 flex-shrink-0"
-                      style={{ color: "var(--color-energy-yellow)" }}
-                    />
-                    <span
-                      className="text-sm sm:text-base"
-                      style={{ color: "var(--color-sky-light-700)" }}
-                    >
+                    <feature.icon className="w-5 h-5 flex-shrink-0 text-yellow-500 dark:text-yellow-400" />
+                    <span className="text-sm sm:text-base text-sky-700 dark:text-slate-300">
                       {feature.text}
                     </span>
                   </div>
@@ -350,14 +297,8 @@ const ContactPage = () => {
           </div>
 
           {/* Contact Form */}
-          <div
-            className="rounded-2xl p-8 shadow-lg backdrop-blur-sm"
-            style={{ backgroundColor: "var(--color-sky-light-50)" }}
-          >
-            <h2
-              className="text-2xl font-bold mb-6"
-              style={{ color: "var(--color-sky-light-800)" }}
-            >
+          <div className="rounded-2xl p-8 shadow-lg backdrop-blur-sm bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700">
+            <h2 className="text-2xl font-bold mb-6 text-sky-800 dark:text-slate-100">
               Send Us a Message
             </h2>
 
@@ -426,11 +367,8 @@ const ContactPage = () => {
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  className="w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 disabled:bg-slate-400 dark:disabled:bg-slate-600"
                   style={{
-                    backgroundColor: isSubmitting
-                      ? "var(--color-sky-light-400)"
-                      : "var(--color-sunlink-orange-500)",
                     boxShadow: isSubmitting
                       ? "none"
                       : "0 4px 20px rgba(255, 123, 0, 0.3)",
@@ -504,16 +442,10 @@ const ContactPage = () => {
             opacity: 0.25;
           }
         }
-
-        .focus\\:border-sunlink-orange-500:focus {
-          border-color: var(--color-sunlink-orange-500);
-        }
       `}</style>
 
       <LiveMap />
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

@@ -9,10 +9,10 @@ const NavbarNew = () => {
   const [activeSection, setActiveSection] = useState("home");
 
   const navItems = [
-    { name: "Products", href: "#products" },
-    { name: "About", href: "#about" },
+    { name: "Home", href: "/" },
+    { name: "About", href: "/About" },
     { name: "Services", href: "#services" },
-    { name: "Contact", href: "#contact" },
+    { name: "Contact", href: "/contact" },
   ];
 
   // Initial theme load
