@@ -19,10 +19,21 @@ datasource db {
 model Category {
   id        String   @id @default(cuid())
   name      String   @unique
-  posts     Post[]    
+  blog     Blog[]    
 }
 
-model Post {
+model Writer {
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  bio      String?
+  avatar   String?
+  createdAt DateTime @default(now())
+
+  blogs    Blog[]  
+}
+
+model Blog {
   id          String     @id @default(cuid())
   postname    String
   content     String
@@ -31,10 +42,24 @@ model Post {
   imageOrig   String?  
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  userId      String
-  
-  categories  Category[] 
 
+  userId      String
+  writer      Writer     @relation(fields: [userId], references: [id])
+
+  categories  Category[] 
+}
+
+
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?    // Optional
+  service   String?    // Optional (e.g., solar-installation)
+  subject   String?    // Optional (can be blank)
+  message   String
+  createdAt DateTime @default(now())
 }
 
 

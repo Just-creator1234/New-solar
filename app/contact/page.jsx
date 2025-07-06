@@ -1,4 +1,5 @@
 "use client";
+import ContactForm from "@/app/contact/ContactForm";
 
 import NavbarNew from "@/components/NavbarNew";
 import React, { useState } from "react";
@@ -23,49 +24,6 @@ const LiveMap = dynamic(() => import("@/components/LiveMap"), {
 });
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-    service: "solar-installation",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSubmitted(true);
-
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          subject: "",
-          message: "",
-          service: "solar-installation",
-        });
-      }, 3000);
-    }, 1500);
-  };
-
   const services = [
     { value: "solar-installation", label: "Solar Installation" },
     { value: "energy-audit", label: "Energy Audit" },
@@ -131,59 +89,6 @@ const ContactPage = () => {
           </p>
         ))}
       </div>
-    </div>
-  );
-
-  const FormField = ({
-    label,
-    type = "text",
-    name,
-    value,
-    onChange,
-    required = false,
-    placeholder,
-    rows,
-    options,
-    className = "",
-  }) => (
-    <div className={className}>
-      <label className="block text-sm font-semibold mb-2 text-sky-800 dark:text-slate-200">
-        {label} {required && "*"}
-      </label>
-      {type === "textarea" ? (
-        <textarea
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          rows={rows}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors resize-none bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-          placeholder={placeholder}
-        />
-      ) : type === "select" ? (
-        <select
-          name={name}
-          value={value}
-          onChange={onChange}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-        >
-          {options?.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 dark:border-slate-600 focus:border-orange-500 dark:focus:border-orange-400 focus:outline-none transition-colors bg-amber-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100"
-          placeholder={placeholder}
-        />
-      )}
     </div>
   );
 
@@ -297,98 +202,7 @@ const ContactPage = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="rounded-2xl p-8 shadow-lg backdrop-blur-sm bg-slate-50 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700">
-            <h2 className="text-2xl font-bold mb-6 text-sky-800 dark:text-slate-100">
-              Send Us a Message
-            </h2>
-
-            {isSubmitted ? (
-              <SuccessMessage />
-            ) : (
-              <div className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <FormField
-                    label="Full Name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    placeholder="John Doe"
-                  />
-                  <FormField
-                    label="Email Address"
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="john@example.com"
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  <FormField
-                    label="Phone Number"
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="(555) 123-4567"
-                  />
-                  <FormField
-                    label="Service Interest"
-                    type="select"
-                    name="service"
-                    value={formData.service}
-                    onChange={handleChange}
-                    options={services}
-                  />
-                </div>
-
-                <FormField
-                  label="Subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="Solar Installation Inquiry"
-                />
-
-                <FormField
-                  label="Message"
-                  type="textarea"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={5}
-                  placeholder="Tell us about your solar energy needs..."
-                />
-
-                <button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  className="w-full py-4 px-6 rounded-lg font-semibold text-white transition-all duration-300 transform hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 disabled:bg-slate-400 dark:disabled:bg-slate-600"
-                  style={{
-                    boxShadow: isSubmitting
-                      ? "none"
-                      : "0 4px 20px rgba(255, 123, 0, 0.3)",
-                  }}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-5 h-5" />
-                      <span>Send Message</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
-          </div>
+          <ContactForm />
         </div>
       </main>
 
