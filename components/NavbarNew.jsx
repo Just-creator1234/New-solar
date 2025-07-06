@@ -1,12 +1,15 @@
+
+
 // "use client";
 // import { useRef, useState, useEffect } from "react";
+// import { usePathname } from "next/navigation";
 // import { Sun, Moon } from "lucide-react";
 
 // const NavbarNew = () => {
 //   const navRef = useRef(null);
 //   const [isDark, setIsDark] = useState(false);
 //   const [menuOpen, setMenuOpen] = useState(false);
-//   const [activeSection, setActiveSection] = useState("home");
+//   const pathname = usePathname();
 
 //   const navItems = [
 //     { name: "Home", href: "/" },
@@ -15,7 +18,6 @@
 //     { name: "Contact", href: "/contact" },
 //   ];
 
-//   // Initial theme load
 //   useEffect(() => {
 //     const storedTheme = localStorage.getItem("theme");
 //     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -37,10 +39,17 @@
 //     });
 //   };
 
-//   const handleNavClick = (href, name) => {
-//     setActiveSection(name.toLowerCase());
+//   const isActive = (href) => {
+//     if (href === "/") return pathname === "/";
+//     if (href.startsWith("#")) return false;
+//     return pathname.toLowerCase().startsWith(href.toLowerCase());
+//   };
+
+//   const handleNavClick = (href) => {
 //     setMenuOpen(false);
-//     document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+//     if (href.startsWith("#")) {
+//       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+//     }
 //   };
 
 //   return (
@@ -51,7 +60,7 @@
 //       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16 lg:h-20">
 //         {/* Logo */}
 //         <a
-//           href="#home"
+//           href="/"
 //           className="flex items-center gap-3 group transition-transform duration-300 hover:scale-105"
 //         >
 //           <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg dark:shadow-orange-800/30 group-hover:shadow-orange-500/25 transition-all duration-300">
@@ -67,15 +76,15 @@
 //           </div>
 //         </a>
 
-//         {/* Desktop Navigation */}
+//         {/* Desktop Nav */}
 //         <div className="hidden lg:flex items-center space-x-8">
 //           {navItems.map((item) => (
 //             <a
 //               key={item.name}
 //               href={item.href}
-//               onClick={() => handleNavClick(item.href, item.name)}
+//               onClick={() => handleNavClick(item.href)}
 //               className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 group ${
-//                 activeSection === item.name.toLowerCase()
+//                 isActive(item.href)
 //                   ? "text-orange-600 dark:text-orange-400"
 //                   : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400"
 //               }`}
@@ -83,7 +92,7 @@
 //               {item.name}
 //               <span
 //                 className={`absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-orange-500 to-yellow-500 transform origin-left transition-all duration-300 ${
-//                   activeSection === item.name.toLowerCase()
+//                   isActive(item.href)
 //                     ? "scale-x-100"
 //                     : "scale-x-0 group-hover:scale-x-100"
 //                 }`}
@@ -92,9 +101,9 @@
 //           ))}
 //         </div>
 
-//         {/* Right: Theme Toggle + Mobile Menu Button */}
+//         {/* Right Actions */}
 //         <div className="flex items-center gap-4">
-//           {/* Theme Toggle (always visible) */}
+//           {/* Theme toggle */}
 //           <button
 //             onClick={handleThemeToggle}
 //             className="flex items-center gap-2 px-4 py-2 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white"
@@ -106,7 +115,7 @@
 //             </span>
 //           </button>
 
-//           {/* Mobile Menu Button (only on small screens) */}
+//           {/* Mobile menu toggle */}
 //           <button
 //             onClick={() => setMenuOpen(!menuOpen)}
 //             className="text-orange-600 dark:text-orange-300 text-2xl lg:hidden"
@@ -117,16 +126,16 @@
 //         </div>
 //       </div>
 
-//       {/* Mobile Nav Menu */}
+//       {/* Mobile Menu */}
 //       {menuOpen && (
 //         <div className="lg:hidden bg-white dark:bg-gray-900 border-t border-orange-100 dark:border-gray-800 shadow-md py-4 px-6 flex flex-col space-y-4">
 //           {navItems.map((item) => (
 //             <a
 //               key={item.name}
 //               href={item.href}
-//               onClick={() => handleNavClick(item.href, item.name)}
+//               onClick={() => handleNavClick(item.href)}
 //               className={`text-sm font-medium transition-all ${
-//                 activeSection === item.name.toLowerCase()
+//                 isActive(item.href)
 //                   ? "text-orange-600 dark:text-orange-400"
 //                   : "text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400"
 //               }`}
@@ -142,16 +151,24 @@
 
 // export default NavbarNew;
 
+
 "use client";
-import { useRef, useState, useEffect } from "react";
+
+import { useState, useRef, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { usePathname } from "next/navigation";
 import { Sun, Moon } from "lucide-react";
 
 const NavbarNew = () => {
   const navRef = useRef(null);
-  const [isDark, setIsDark] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true); // avoid hydration mismatch
+  }, []);
 
   const navItems = [
     { name: "Home", href: "/" },
@@ -159,27 +176,6 @@ const NavbarNew = () => {
     { name: "Services", href: "#services" },
     { name: "Contact", href: "/contact" },
   ];
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
-      document.documentElement.classList.add("dark");
-      setIsDark(true);
-    } else {
-      document.documentElement.classList.remove("dark");
-      setIsDark(false);
-    }
-  }, []);
-
-  const handleThemeToggle = () => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle("dark", next);
-      localStorage.setItem("theme", next ? "dark" : "light");
-      return next;
-    });
-  };
 
   const isActive = (href) => {
     if (href === "/") return pathname === "/";
@@ -193,6 +189,8 @@ const NavbarNew = () => {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     }
   };
+
+  if (!mounted) return null; // Prevent theme mismatch flash
 
   return (
     <nav
@@ -247,13 +245,19 @@ const NavbarNew = () => {
         <div className="flex items-center gap-4">
           {/* Theme toggle */}
           <button
-            onClick={handleThemeToggle}
+            onClick={() =>
+              setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
             className="flex items-center gap-2 px-4 py-2 rounded-full font-semibold shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl bg-gradient-to-r from-orange-500 to-yellow-500 text-white"
             aria-label="Toggle theme"
           >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {resolvedTheme === "dark" ? (
+              <Sun className="w-5 h-5" />
+            ) : (
+              <Moon className="w-5 h-5" />
+            )}
             <span className="text-sm hidden sm:inline">
-              {isDark ? "Light" : "Dark"} Mode
+              {resolvedTheme === "dark" ? "Light" : "Dark"} Mode
             </span>
           </button>
 
