@@ -581,11 +581,13 @@ export default function EnhancedCreatePostPage() {
   return (
     <div className="min-h-screen bg-comfort-cream dark:bg-sky-light-900 mt-10">
       {/* Header */}
+      {/* Header */}
       <div className="bg-white dark:bg-sky-light-800 border-b border-sky-light-200 dark:border-sky-light-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-xl font-semibold text-sky-light-900 dark:text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-y-3">
+            {/* Title & Last Saved */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
+              <h1 className="text-lg sm:text-xl font-semibold text-sky-light-900 dark:text-white">
                 Create New Post
               </h1>
               {lastSaved && (
@@ -594,17 +596,19 @@ export default function EnhancedCreatePostPage() {
                 </span>
               )}
             </div>
-            <div className="flex items-center space-x-3">
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2 sm:gap-3">
               <button
                 onClick={() => setShowPreview(!showPreview)}
-                className="inline-flex items-center px-3 py-2 border border-sky-light-300 dark:border-sky-light-600 rounded-md text-sm font-medium text-sky-light-700 dark:text-sky-light-300 bg-white dark:bg-sky-light-800 hover:bg-sky-light-50 dark:hover:bg-sky-light-700"
+                className="inline-flex items-center px-3 py-2 border border-sky-light-300 dark:border-sky-light-600 rounded-md text-sm font-medium text-sky-light-700 dark:text-sky-light-300 bg-white dark:bg-sky-light-800 hover:bg-sky-light-50 dark:hover:bg-sky-light-700 transition"
               >
                 <FiEye className="mr-2" />
                 {showPreview ? "Edit" : "Preview"}
               </button>
               <button
                 onClick={handleAutoSave}
-                className="inline-flex items-center px-3 py-2 border border-sky-light-300 dark:border-sky-light-600 rounded-md text-sm font-medium text-sky-light-700 dark:text-sky-light-300 bg-white dark:bg-sky-light-800 hover:bg-sky-light-50 dark:hover:bg-sky-light-700"
+                className="inline-flex items-center px-3 py-2 border border-sky-light-300 dark:border-sky-light-600 rounded-md text-sm font-medium text-sky-light-700 dark:text-sky-light-300 bg-white dark:bg-sky-light-800 hover:bg-sky-light-50 dark:hover:bg-sky-light-700 transition"
               >
                 <FiSave className="mr-2" />
                 Save Draft
@@ -612,7 +616,7 @@ export default function EnhancedCreatePostPage() {
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sunlink-orange-500 hover:bg-sunlink-orange-600 disabled:opacity-50"
+                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-sunlink-orange-500 hover:bg-sunlink-orange-600 disabled:opacity-50 transition"
               >
                 {isSubmitting ? "Publishing..." : "Publish"}
               </button>
