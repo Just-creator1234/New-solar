@@ -10,6 +10,7 @@ const LiveMap = () => {
   const [Popup, setPopup] = useState(null);
   const [L, setL] = useState(null);
 
+  const ghPhone = "+233241926409";
   useEffect(() => {
     // Dynamic import to avoid SSR issues
     const loadMap = async () => {
@@ -233,7 +234,7 @@ const LiveMap = () => {
                   style={{
                     boxShadow: "0 4px 15px rgba(255, 123, 0, 0.3)",
                   }}
-                  onClick={() => window.open(`tel:+15551237652`, "_self")}
+                 onClick={() => window.open(`tel:${ghPhone}`, "_self")}
                 >
                   <Phone className="w-4 h-4" />
                   <span>Call Now</span>

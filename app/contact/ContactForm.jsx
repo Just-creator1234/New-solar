@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle } from "lucide-react";
+import { saveContact } from "@/app/actions/saveContact"; 
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -23,27 +24,41 @@ export default function ContactForm() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
 
-    console.log("Form submitted:", formData);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
+  try {
+    const result = await saveContact(formData); 
+    console.log(formData,"ffffffffffffffffff")
+
+    if (result.success) {
+      console.log("Form saved to DB:", result.data);
       setIsSubmitted(true);
-      setTimeout(() => {
-        setIsSubmitted(false);
-        setFormData({
-          name: "",
-          email: "",
-          phone: "",
-          service: "",
-          message: "",
-        });
-      }, 3000);
-    }, 1500);
-  };
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        service: "",
+        subject: "", // if included
+        message: "",
+      });
+
+      // Optional: reset the submitted state after delay
+      setTimeout(() => setIsSubmitted(false), 3000);
+    } else {
+      console.error("Error:", result.error);
+      // Optionally show error message to user
+    }
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    // Optionally show a fallback error
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   const SuccessMessage = () => (
     <div className="text-center py-12">
