@@ -229,13 +229,16 @@ export default function DiagonalHeroSection() {
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.2 }}
-          className="w-full lg:w-1/2 z-10 space-y-3 sm:space-y-8 text-center lg:text-left mb-8 lg:mb-0"
+          className="w-full lg:w-1/2 z-10 space-y-4 text-center lg:text-left mb-6 lg:mb-0"
         >
-          <div className="space-y-2">
-            <div className="inline-flex items-center px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium border border-orange-300 dark:border-orange-700 bg-orange-100/20 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400">
+          {/* Tagline */}
+          <div className="space-y-1">
+            <div className="inline-flex items-center px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium border border-orange-300 dark:border-orange-700 bg-orange-100/20 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400">
               ✨ Sustainable Energy Solutions
             </div>
-            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-[3.5rem] font-bold leading-tight tracking-tight">
+
+            {/* Heading */}
+            <h1 className="text-2xl sm:text-3xl md:text-[2.5rem] lg:text-[3rem] font-bold leading-snug tracking-tight">
               <span className="bg-gradient-to-r from-orange-500 via-orange-600 to-red-500 bg-clip-text text-transparent">
                 Power Your Home
               </span>
@@ -249,18 +252,20 @@ export default function DiagonalHeroSection() {
               </span>
             </h1>
           </div>
-          <p className="text-gray-600 dark:text-gray-300 max-w-lg mx-auto lg:mx-0 text-base sm:text-lg leading-relaxed font-medium">
-            We are committed to excellence in solar innovation, offering design,
-            installation, and maintenance services for residential, commercial,
-            and industrial clients. Our team of experts ensures seamless
-            integration of renewable energy into your lifestyle or business
-            operations, optimizing efficiency and reducing costs.
+
+          {/* Description */}
+          <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-relaxed font-medium">
+            We offer cutting-edge solar design, installation, and maintenance
+            for homes and businesses. Seamlessly integrate renewable energy,
+            reduce your bills, and power a sustainable future.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 pt-2 items-center justify-center lg:justify-start">
-            <button className="group relative px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all w-full sm:w-auto">
+
+          {/* Call to Action */}
+          <div className="flex flex-col sm:flex-row gap-3 pt-2 items-center justify-center lg:justify-start">
+            <button className="group relative px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all w-full sm:w-auto">
               <span className="relative z-10">Get Free Quote</span>
             </button>
-            <button className="group px-6 sm:px-8 py-3 sm:py-4 rounded-2xl font-semibold border-2 border-orange-500 text-orange-600 dark:text-orange-400 dark:border-orange-600 bg-orange-100/20 dark:bg-orange-900/10 hover:scale-105 hover:shadow-md transition-all w-full sm:w-auto">
+            <button className="group px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-semibold border-2 border-orange-500 text-orange-600 dark:text-orange-400 dark:border-orange-600 bg-orange-100/20 dark:bg-orange-900/10 hover:scale-105 hover:shadow-md transition-all w-full sm:w-auto">
               Learn More →
             </button>
           </div>
