@@ -12,13 +12,15 @@ export async function createPost(formData) {
       return { error: "Unauthorized upload attempt" };
     }
 
+    const action = formData.get("action"); // from the button's name="action" value
+    const status = action === "publish" ? "PUBLISHED" : "DRAFT";
+
     // Extract data
     const data = {
       title: formData.get("title"),
       slug: formData.get("slug"),
       content: formData.get("content"),
       excerpt: formData.get("excerpt"),
-      status: formData.get("status"),
       publishDate: formData.publishDate ? new Date(formData.publishDate) : null,
       altText: formData.get("altText"),
       categories: JSON.parse(formData.get("categories") || "[]"),
@@ -63,53 +65,6 @@ export async function createPost(formData) {
         coverImageUrl = url;
       }
     }
-    // const categoryRecords = await prisma.category.findMany({
-    //   where: {
-    //     slug: { in: data.categories }, // ["business", "ai-ml"]
-    //   },
-    // });
-    // // Create post
-    // const post = await prisma.post.create({
-    //   data: {
-    //     title: data.title,
-    //     slug: data.slug,
-    //     content: data.content,
-    //     excerpt: data.excerpt,
-    //     status: data.status,
-    //     publishDate: data.publishDate,
-    //     coverImage: coverImageUrl,
-    //     altText: data.altText,
-    //     wordCount: wordCount,
-    //     readingTime: readingTime,
-    //     metaTitle: data.metaTitle,
-    //     metaDescription: data.metaDescription,
-    //     focusKeyword: data.focusKeyword,
-
-    //     // ✅ THIS is the correct way to connect existing author
-    //     author: {
-    //       connect: {
-    //         id: data.authorId,
-    //       },
-    //     },
-
-    //     // Categories and tags
-    //     categories: {
-    //       create: categoryRecords.map((cat) => ({
-    //         category: { connect: { slug: cat.slug } }, // ✅ or { slug: cat.slug }
-    //       })),
-    //     },
-    //     tags: {
-    //       create: data.tags.map((tag) => ({
-    //         tag: { connect: { name: tag } },
-    //       })),
-    //     },
-    //   },
-    //   include: {
-    //     categories: { include: { category: true } },
-    //     tags: { include: { tag: true } },
-    //     author: true,
-    //   },
-    // });
 
     const categoryRecords = await prisma.category.findMany({
       where: {
@@ -123,7 +78,7 @@ export async function createPost(formData) {
         slug: data.slug,
         content: data.content,
         excerpt: data.excerpt,
-        status: data.status,
+        status: status,
         publishDate: data.publishDate,
         coverImage: coverImageUrl,
         altText: data.altText,
@@ -172,23 +127,22 @@ export async function createPost(formData) {
   }
 }
 
+
 export async function saveDraft(formData) {
-  console.log(formData, "ggggggggggggggg");
   try {
     const data = {
       title: formData.get("title"),
       slug: formData.get("slug"),
       content: formData.get("content"),
       excerpt: formData.get("excerpt"),
-      status: "DRAFT",
-      categories: JSON.parse(formData.get("categories") || "[]"), // slugs
-      tags: JSON.parse(formData.get("tags") || "[]"), // names
+      status: formData.get("action") === "publish" ? "PUBLISHED" : "DRAFT",
+      categories: JSON.parse(formData.get("categories") || "[]"),
+      tags: JSON.parse(formData.get("tags") || "[]"),
       metaTitle: formData.get("metaTitle"),
       metaDescription: formData.get("metaDescription"),
       focusKeyword: formData.get("focusKeyword"),
     };
 
-    // Auto-generate slug if not provided
     if (!data.slug && data.title) {
       data.slug = data.title
         .toLowerCase()
@@ -198,14 +152,12 @@ export async function saveDraft(formData) {
         .trim();
     }
 
-    // Calculate word count and reading time
     const wordCount = data.content
       ? data.content
           .replace(/<[^>]*>/g, "")
           .split(/\s+/)
-          .filter((word) => word.length > 0).length
+          .filter(Boolean).length
       : 0;
-
     const readingTime = Math.ceil(wordCount / 200);
 
     let coverImageUrl = null;
@@ -218,21 +170,28 @@ export async function saveDraft(formData) {
           body: formData,
         }
       );
-
       if (uploadResponse.ok) {
         const { url } = await uploadResponse.json();
         coverImageUrl = url;
       }
     }
 
-    // Resolve category slugs
     const categoryRecords = await prisma.category.findMany({
       where: {
         slug: { in: data.categories },
       },
     });
 
-    // Upsert draft post
+    const tagRecords = await Promise.all(
+      data.tags.map(async (tagName) => {
+        return await prisma.tag.upsert({
+          where: { name: tagName },
+          update: {},
+          create: { name: tagName },
+        });
+      })
+    );
+
     const draft = await prisma.post.upsert({
       where: { slug: data.slug },
       update: {
@@ -242,36 +201,36 @@ export async function saveDraft(formData) {
         wordCount,
         readingTime,
         updatedAt: new Date(),
+        status: data.status,
+        coverImage: coverImageUrl,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        focusKeyword: data.focusKeyword,
+        categories: {
+          set: categoryRecords.map((cat) => ({ id: cat.id })),
+        },
+        tags: {
+          set: tagRecords.map((tag) => ({ id: tag.id })),
+        },
       },
       create: {
         title: data.title,
         slug: data.slug,
         content: data.content,
         excerpt: data.excerpt,
-        status: "DRAFT",
+        status: data.status,
         wordCount,
         readingTime,
         coverImage: coverImageUrl,
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription,
         focusKeyword: data.focusKeyword,
-        authorId: "sunlink-author", // or your fixed author ID
+        authorId: "sunlink-author",
         categories: {
-          create: categoryRecords.map((cat) => ({
-            categoryId: cat.id,
-          })),
+          connect: categoryRecords.map((cat) => ({ id: cat.id })),
         },
         tags: {
-          create: await Promise.all(
-            data.tags.map(async (tagName) => {
-              const tag = await prisma.tag.upsert({
-                where: { name: tagName },
-                update: {},
-                create: { name: tagName },
-              });
-              return { tagId: tag.id };
-            })
-          ),
+          connect: tagRecords.map((tag) => ({ id: tag.id })),
         },
       },
     });

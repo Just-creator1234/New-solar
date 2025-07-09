@@ -3,6 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { createPost, saveDraft } from "@/app/actions/createPost";
 import { getAllCategories } from "@/app/actions/getCategories";
+import { useAutoSave } from "@/hook/useAutoSave";
+import { formatDistanceToNow } from "date-fns";
+
 import {
   FiBold,
   FiItalic,
@@ -265,9 +268,6 @@ export default function EnhancedCreatePostPage() {
   const [author, setAuthor] = useState("John Doe");
   const [publishDate, setPublishDate] = useState("");
   const [status, setStatus] = useState("DRAFT");
-  const [visibility, setVisibility] = useState("PUBLIC");
-
-  const [password, setPassword] = useState("");
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -286,9 +286,52 @@ export default function EnhancedCreatePostPage() {
 
   // Validation state
   const [validationErrors, setValidationErrors] = useState({});
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (autoSave) {
+        e.preventDefault();
+        e.returnValue = ""; // Required for Chrome to show the dialog
+      }
+    };
 
-  const contentRef = useRef(null);
-  const autoSaveInterval = useRef(null);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [autoSave]);
+
+  useAutoSave(
+    {
+      title,
+      slug,
+      content,
+      excerpt,
+      metaTitle,
+      metaDescription,
+      focusKeyword,
+    },
+    handleAutoSave, // this is your async saveDraft function
+    setLastSaved // updates the "last saved" time
+  );
+
+  async function handleAutoSave() {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("slug", slug);
+    formData.append("content", content);
+    formData.append("excerpt", excerpt);
+    formData.append("metaTitle", metaTitle);
+    formData.append("metaDescription", metaDescription);
+    formData.append("focusKeyword", focusKeyword);
+    formData.append("categories", JSON.stringify(selectedCategories));
+    formData.append("tags", JSON.stringify(tags.map((t) => t.name)));
+
+    // Optional: add coverImage if needed
+    if (coverImageFile) formData.append("image", coverImageFile);
+
+    await saveDraft(formData);
+  }
 
   // Mock categories data
   useEffect(() => {
@@ -331,26 +374,6 @@ export default function EnhancedCreatePostPage() {
       setReadingTime(Math.ceil(count / 200));
     }
   }, [content]);
-
-  // Auto-save functionality
-  useEffect(() => {
-    if (autoSave && (title || content)) {
-      autoSaveInterval.current = setInterval(() => {
-        handleAutoSave();
-      }, 30000);
-
-      return () => {
-        if (autoSaveInterval.current) {
-          clearInterval(autoSaveInterval.current);
-        }
-      };
-    }
-  }, [title, content, autoSave]);
-
-  const handleAutoSave = () => {
-    setLastSaved(new Date());
-    console.log("Auto-saved at:", new Date());
-  };
 
   const handleSaveDraft = async () => {
     const formData = new FormData();
@@ -441,6 +464,7 @@ export default function EnhancedCreatePostPage() {
     formData.append("excerpt", excerpt);
     formData.append("tags", JSON.stringify(tags));
     formData.append("categories", JSON.stringify(selectedCategories));
+    formData.append("action", "publish");
 
     console.log(selectedCategories);
     formData.append("author", author);
@@ -504,7 +528,10 @@ export default function EnhancedCreatePostPage() {
               </h1>
               {lastSaved && (
                 <span className="text-sm text-gray-500 dark:text-gray-400">
-                  Last saved: {lastSaved.toLocaleTimeString()}
+                  Last saved:{" "}
+                  {formatDistanceToNow(new Date(lastSaved), {
+                    addSuffix: true,
+                  })}
                 </span>
               )}
             </div>
@@ -518,13 +545,20 @@ export default function EnhancedCreatePostPage() {
                 {showPreview ? "Edit" : "Preview"}
               </button>
               <button
+                type="submit"
+                name="action"
+                value="save"
                 onClick={handleSaveDraft}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <FiSave className="mr-2" />
                 Save Draft
               </button>
+
               <button
+                type="submit"
+                name="action"
+                value="publish"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 disabled:opacity-50 transition"
