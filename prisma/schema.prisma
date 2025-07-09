@@ -17,39 +17,97 @@ datasource db {
 
 
 
-model Category {
+model User {
   id        String   @id @default(cuid())
-  name      String   @unique
-  blog     Blog[]    
-}
-
-model Writer {
-  id       String  @id @default(cuid())
-  name     String
-  email    String  @unique
-  bio      String?
-  avatar   String?
+  email     String   @unique
+  name      String?
+  posts     Post[]
   createdAt DateTime @default(now())
-
-  blogs    Blog[]  
+  updatedAt DateTime @updatedAt
 }
 
-model Blog {
-  id          String     @id @default(cuid())
-  postname    String
-  content     String
-  excerpt     String? 
-  image       String?  
-  imageOrig   String?  
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  userId      String
-  writer      Writer     @relation(fields: [userId], references: [id])
-
-  categories  Category[] 
+model Post {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  content     String   @db.Text
+  excerpt     String?
+  status      PostStatus @default(DRAFT)
+  visibility  PostVisibility @default(PUBLIC)
+  password    String?
+  publishDate DateTime?
+  coverImage  String?
+  altText     String?
+  wordCount   Int      @default(0)
+  readingTime Int      @default(0)
+  
+  // Relations
+  author      User     @relation(fields: [authorId], references: [id])
+  authorId    String
+  categories  PostCategory[]
+  tags        PostTag[]
+  
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  focusKeyword    String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([status])
+  @@index([slug])
+  @@index([authorId])
 }
 
+model Category {
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts PostCategory[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Tag {
+  id    String @id @default(cuid())
+  name  String @unique
+  posts PostTag[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PostCategory {
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId     String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String
+  
+  @@id([postId, categoryId])
+}
+
+model PostTag {
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId  String
+  
+  @@id([postId, tagId])
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+}
+
+enum PostVisibility {
+  PUBLIC
+  PRIVATE
+  PASSWORD
+}
 
 
 model ContactMessage {

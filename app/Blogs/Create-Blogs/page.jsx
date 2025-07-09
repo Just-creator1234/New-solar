@@ -831,10 +831,10 @@
 //   );
 // }
 
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { createPost, saveDraft } from "@/app/actions/createPost";
 import {
   FiBold,
   FiItalic,
@@ -869,7 +869,11 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 
-function TiptapEditor({ content, onChange, placeholder = "Write something amazing..." }) {
+function TiptapEditor({
+  content,
+  onChange,
+  placeholder = "Write something amazing...",
+}) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -906,63 +910,89 @@ function TiptapEditor({ content, onChange, placeholder = "Write something amazin
   };
 
   const setLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('URL', previousUrl);
+    const previousUrl = editor.getAttributes("link").href;
+    const url = window.prompt("URL", previousUrl);
 
     if (url === null) {
       return;
     }
 
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
 
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
 
   return (
-    <div className="border border-gray-300 min-h-screen bg-comfort-cream dark:bg-sky-light-900 mt-12">
+    <div className="border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800">
       <div className="flex flex-wrap gap-1 p-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 rounded-t-lg">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-2 rounded-md ${editor.isActive('bold') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("bold")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Bold"
         >
           <FiBold />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded-md ${editor.isActive('italic') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("italic")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Italic"
         >
           <FiItalic />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={`p-2 rounded-md ${editor.isActive('underline') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("underline")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Underline"
         >
           <FiUnderline />
         </button>
         <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
         <button
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={`p-2 rounded-md ${editor.isActive('heading', { level: 2 }) ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={`p-2 rounded-md ${
+            editor.isActive("heading", { level: 2 })
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Heading"
         >
           <FiType />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded-md ${editor.isActive('bulletList') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("bulletList")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Bullet List"
         >
           <FiList />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded-md ${editor.isActive('orderedList') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("orderedList")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Numbered List"
         >
           <FaListOl />
@@ -970,14 +1000,22 @@ function TiptapEditor({ content, onChange, placeholder = "Write something amazin
         <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
         <button
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded-md ${editor.isActive('blockquote') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("blockquote")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Quote"
         >
           <FaQuoteRight />
         </button>
         <button
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`p-2 rounded-md ${editor.isActive('codeBlock') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("codeBlock")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Code Block"
         >
           <BsCodeSlash />
@@ -992,7 +1030,11 @@ function TiptapEditor({ content, onChange, placeholder = "Write something amazin
         <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
         <button
           onClick={setLink}
-          className={`p-2 rounded-md ${editor.isActive('link') ? 'bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200' : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600'}`}
+          className={`p-2 rounded-md ${
+            editor.isActive("link")
+              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
+              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
+          }`}
           title="Link"
         >
           <FiLink />
@@ -1008,7 +1050,9 @@ function TiptapEditor({ content, onChange, placeholder = "Write something amazin
         <button
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
-          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${!editor.can().undo() ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${
+            !editor.can().undo() ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           title="Undo"
         >
           <FiCornerUpLeft />
@@ -1016,7 +1060,9 @@ function TiptapEditor({ content, onChange, placeholder = "Write something amazin
         <button
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
-          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${!editor.can().redo() ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${
+            !editor.can().redo() ? "opacity-50 cursor-not-allowed" : ""
+          }`}
           title="Redo"
         >
           <FiCornerUpRight />
@@ -1050,8 +1096,9 @@ export default function EnhancedCreatePostPage() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [author, setAuthor] = useState("John Doe");
   const [publishDate, setPublishDate] = useState("");
-  const [status, setStatus] = useState("draft");
-  const [visibility, setVisibility] = useState("public");
+  const [status, setStatus] = useState("DRAFT");
+  const [visibility, setVisibility] = useState("PUBLIC");
+
   const [password, setPassword] = useState("");
 
   // UI state
@@ -1072,14 +1119,14 @@ export default function EnhancedCreatePostPage() {
   // Mock categories data
   useEffect(() => {
     setCategories([
-      { id: 1, name: "Technology", slug: "technology" },
-      { id: 2, name: "Design", slug: "design" },
-      { id: 3, name: "Business", slug: "business" },
-      { id: 4, name: "Marketing", slug: "marketing" },
-      { id: 5, name: "Development", slug: "development" },
-      { id: 6, name: "AI & ML", slug: "ai-ml" },
-      { id: 7, name: "Mobile", slug: "mobile" },
-      { id: 8, name: "Web", slug: "web" },
+      { id: "technology", name: "Technology", slug: "technology" },
+      { id: "design", name: "Design", slug: "design" },
+      { id: "business", name: "Business", slug: "business" },
+      { id: "marketing", name: "Marketing", slug: "marketing" },
+      { id: "development", name: "Development", slug: "development" },
+      { id: "ai-ml", name: "AI & ML", slug: "ai-ml" },
+      { id: "mobile", name: "Mobile", slug: "mobile" },
+      { id: "web", name: "Web", slug: "web" },
     ]);
   }, []);
 
@@ -1127,6 +1174,28 @@ export default function EnhancedCreatePostPage() {
   const handleAutoSave = () => {
     setLastSaved(new Date());
     console.log("Auto-saved at:", new Date());
+  };
+
+  const handleSaveDraft = async () => {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("slug", slug);
+    formData.append("content", content);
+    formData.append("excerpt", excerpt);
+    formData.append("categories", JSON.stringify(selectedCategories));
+    formData.append("tags", JSON.stringify(tags));
+    formData.append("authorId", "sunlink-author");
+
+    try {
+      const result = await saveDraft(formData);
+      if (result.success) {
+        alert("Draft saved successfully!");
+      } else {
+        alert("Failed to save draft.");
+      }
+    } catch (error) {
+      console.error("Draft save error:", error);
+    }
   };
 
   const handleTagAdd = () => {
@@ -1182,26 +1251,28 @@ export default function EnhancedCreatePostPage() {
 
     setIsSubmitting(true);
 
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("slug", slug);
+    formData.append("content", content);
+    formData.append("excerpt", excerpt);
+    formData.append("tags", JSON.stringify(tags));
+    formData.append("categories", JSON.stringify(selectedCategories));
+    formData.append("author", author);
+    formData.append("publishDate", publishDate);
+    formData.append("status", status);
+    formData.append("visibility", visibility.toUpperCase());
+    formData.append("password", password);
+    formData.append("altText", altText);
+    formData.append("secret", "blackbills");
+    formData.append("authorId", "sunlink-author");
+
+    if (coverImageFile) {
+      formData.append("image", coverImageFile);
+    }
+
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("slug", slug);
-      formData.append("content", content);
-      formData.append("excerpt", excerpt);
-      formData.append("tags", JSON.stringify(tags));
-      formData.append("categories", JSON.stringify(selectedCategories));
-      formData.append("author", author);
-      formData.append("publishDate", publishDate);
-      formData.append("status", status);
-      formData.append("visibility", visibility);
-      formData.append("password", password);
-      formData.append("altText", altText);
-
-      if (coverImageFile) {
-        formData.append("image", coverImageFile);
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await createPost(formData);
 
       alert(
         `Post ${status === "published" ? "published" : "saved"} successfully!`
@@ -1232,7 +1303,7 @@ export default function EnhancedCreatePostPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 mt-12">
+    <div className="min-h-screen bg-comfort-cream dark:bg-gray-900 mt-12">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
@@ -1257,7 +1328,7 @@ export default function EnhancedCreatePostPage() {
                 {showPreview ? "Edit" : "Preview"}
               </button>
               <button
-                onClick={handleAutoSave}
+                onClick={handleSaveDraft}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <FiSave className="mr-2" />
@@ -1453,9 +1524,9 @@ export default function EnhancedCreatePostPage() {
                       onChange={(e) => setStatus(e.target.value)}
                       className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white"
                     >
-                      <option value="draft">Draft</option>
-                      <option value="published">Published</option>
-                      <option value="scheduled">Scheduled</option>
+                      <option value="DRAFT">Draft</option>
+                      <option value="PUBLISHED">Published</option>
+                      <option value="SCHEDULED">Scheduled</option>
                     </select>
                   </div>
 
