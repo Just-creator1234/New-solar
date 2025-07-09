@@ -8,8 +8,8 @@ export async function getPosts(status) {
     where: status ? { status } : {},
     orderBy: { createdAt: "desc" },
     include: {
-      categories: { include: { category: true } },
-      tags: { include: { tag: true } },
+      categories: true,
+      tags: true,
       author: true,
     },
   });

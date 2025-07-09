@@ -60,6 +60,6 @@
     "typescript": "^5"
   },
   "prisma": {
-    "seed": "node prisma/userSeed.js"
+    "seed": "node prisma/seed.js"
   }
 }

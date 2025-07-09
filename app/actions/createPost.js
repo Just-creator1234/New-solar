@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function createPost(formData) {
-  console.log(formData, "gggggggggggggg");
   try {
     // 🔐 Secret check
     const secret = formData.get("secret");
@@ -20,9 +19,7 @@ export async function createPost(formData) {
       content: formData.get("content"),
       excerpt: formData.get("excerpt"),
       status: formData.get("status"),
-      visibility: formData.get("visibility"),
-      password: formData.get("password"),
-      publishDate: formData.get("publishDate"),
+      publishDate: formData.publishDate ? new Date(formData.publishDate) : null,
       altText: formData.get("altText"),
       categories: JSON.parse(formData.get("categories") || "[]"),
       tags: JSON.parse(formData.get("tags") || "[]"),
@@ -66,15 +63,60 @@ export async function createPost(formData) {
         coverImageUrl = url;
       }
     }
+    // const categoryRecords = await prisma.category.findMany({
+    //   where: {
+    //     slug: { in: data.categories }, // ["business", "ai-ml"]
+    //   },
+    // });
+    // // Create post
+    // const post = await prisma.post.create({
+    //   data: {
+    //     title: data.title,
+    //     slug: data.slug,
+    //     content: data.content,
+    //     excerpt: data.excerpt,
+    //     status: data.status,
+    //     publishDate: data.publishDate,
+    //     coverImage: coverImageUrl,
+    //     altText: data.altText,
+    //     wordCount: wordCount,
+    //     readingTime: readingTime,
+    //     metaTitle: data.metaTitle,
+    //     metaDescription: data.metaDescription,
+    //     focusKeyword: data.focusKeyword,
 
-    // Resolve category slugs to actual category records
+    //     // ✅ THIS is the correct way to connect existing author
+    //     author: {
+    //       connect: {
+    //         id: data.authorId,
+    //       },
+    //     },
+
+    //     // Categories and tags
+    //     categories: {
+    //       create: categoryRecords.map((cat) => ({
+    //         category: { connect: { slug: cat.slug } }, // ✅ or { slug: cat.slug }
+    //       })),
+    //     },
+    //     tags: {
+    //       create: data.tags.map((tag) => ({
+    //         tag: { connect: { name: tag } },
+    //       })),
+    //     },
+    //   },
+    //   include: {
+    //     categories: { include: { category: true } },
+    //     tags: { include: { tag: true } },
+    //     author: true,
+    //   },
+    // });
+
     const categoryRecords = await prisma.category.findMany({
       where: {
-        slug: { in: data.categories }, // e.g., ["technology", "ai-ml"]
+        slug: { in: data.categories }, // ["business", "ai-ml"]
       },
     });
 
-    // Create post
     const post = await prisma.post.create({
       data: {
         title: data.title,
@@ -82,45 +124,40 @@ export async function createPost(formData) {
         content: data.content,
         excerpt: data.excerpt,
         status: data.status,
-        visibility: data.visibility,
-        password: data.password,
-        publishDate: data.publishDate ? new Date(data.publishDate) : null,
+        publishDate: data.publishDate,
         coverImage: coverImageUrl,
         altText: data.altText,
-        wordCount,
-        readingTime,
+        wordCount: wordCount,
+        readingTime: readingTime,
         metaTitle: data.metaTitle,
         metaDescription: data.metaDescription,
         focusKeyword: data.focusKeyword,
-        authorId: "sunlink-author", // Or pull from session if auth added later
+
+        author: {
+          connect: {
+            id: data.authorId,
+          },
+        },
+
+        // ✅ Correct usage for direct many-to-many relation
         categories: {
-          create: categoryRecords.map((cat) => ({
-            categoryId: cat.id,
-          })),
+          connect: categoryRecords.map((cat) => ({ id: cat.id })),
         },
         tags: {
-          create: await Promise.all(
-            data.tags.map(async (tagName) => {
-              const tag = await prisma.tag.upsert({
-                where: { name: tagName },
-                update: {},
-                create: { name: tagName },
-              });
-              return { tagId: tag.id };
-            })
-          ),
+          create: data.tags.map((tag) => ({
+            tag: { connect: { name: tag } },
+          })),
         },
       },
       include: {
-        categories: { include: { category: true } },
-        tags: { include: { tag: true } },
+        categories: true,
+        tags: true,
         author: true,
       },
     });
 
-    // Revalidate pages
+    console.log(post, "ggggggggggggggggggggggggg");
     revalidatePath("/blog");
-    revalidatePath("/dashboard/posts");
 
     return {
       success: true,

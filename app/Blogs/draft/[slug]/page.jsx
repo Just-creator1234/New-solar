@@ -1,77 +1,3 @@
-// import { notFound } from "next/navigation";
-// import prisma from "@/lib/prisma";
-// import { format } from "date-fns";
-// import { Calendar, User } from "lucide-react";
-
-// export const dynamic = "force-dynamic"; // always fetch latest
-
-// export default async function DraftPostPage({ params }) {
-//   const { slug } = await params;
-
-//   const post = await prisma.post.findUnique({
-//     where: { slug },
-//     include: {
-//       author: true,
-//       tags: { include: { tag: true } },
-//       categories: { include: { category: true } },
-//     },
-//   });
-
-//   if (!post || post.status !== "DRAFT") {
-//     notFound();
-//   }
-
-//   return (
-//     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-6">
-//       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
-//         <div className="flex items-center justify-between mb-4">
-//           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-//             {post.title}
-//           </h1>
-//           <span className="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-//             DRAFT
-//           </span>
-//         </div>
-
-//         <div className="flex flex-wrap gap-6 text-gray-600 dark:text-gray-400 mb-6 text-sm">
-//           <div className="flex items-center gap-2">
-//             <User size={14} />
-//             <span>{post.author?.name ?? "Unknown Author"}</span>
-//           </div>
-//           <div className="flex items-center gap-2">
-//             <Calendar size={14} />
-//             <span>{format(new Date(post.createdAt), "MMMM d, yyyy")}</span>
-//           </div>
-//         </div>
-
-//         {post.coverImage && (
-//           <img
-//             src={post.coverImage}
-//             alt={post.altText || post.title}
-//             className="rounded-lg w-full mb-6"
-//           />
-//         )}
-
-//         <article
-//           className="prose dark:prose-invert max-w-none"
-//           dangerouslySetInnerHTML={{ __html: post.content }}
-//         />
-
-//         <div className="mt-8 flex flex-wrap gap-2">
-//           {post.tags.map(({ tag }) => (
-//             <span
-//               key={tag.id}
-//               className="px-3 py-1 text-xs bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full"
-//             >
-//               #{tag.name}
-//             </span>
-//           ))}
-//         </div>
-//       </div>
-//     </main>
-//   );
-// }
-
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { format } from "date-fns";
@@ -86,9 +12,9 @@ export default async function DraftPostPage({ params }) {
   const post = await prisma.post.findUnique({
     where: { slug },
     include: {
+      categories: true,
+      tags: true,
       author: true,
-      tags: { include: { tag: true } },
-      categories: { include: { category: true } },
     },
   });
 
@@ -170,9 +96,9 @@ export default async function DraftPostPage({ params }) {
           {/* Categories */}
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
-              {post.categories.map(({ category }) => (
+              {post.categories.map((category, i) => (
                 <span
-                  key={category.id}
+                  key={i}
                   className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
                 >
                   {category.name}

@@ -1,299 +1,3 @@
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import { useRouter, useParams } from "next/navigation";
-// import { updatePost, getPostBySlug } from "@/app/actions/editPost";
-// import { Loader2 } from "lucide-react";
-
-// export default function EditPostPage() {
-//   const router = useRouter();
-//   const { slug } = useParams();
-
-//   const [loading, setLoading] = useState(true);
-//   const [submitting, setSubmitting] = useState(false);
-
-//   const [post, setPost] = useState({
-//     title: "",
-//     content: "",
-//     coverImage: "", // this will hold the uploaded file URL (optional)
-//     imageFile: null, // new: File object
-//     altText: "",
-//     excerpt: "",
-//     categories: [],
-//     tags: [],
-//     status: "DRAFT",
-//     metaTitle: "",
-//     metaDescription: "",
-//     focusKeyword: "",
-//   });
-
-//   useEffect(() => {
-//     const fetchPost = async () => {
-//       const data = await getPostBySlug(slug);
-
-//       if (data) {
-//         setPost({
-//           title: data.title || "",
-//           content: data.content || "",
-//           coverImage: data.coverImage || "",
-//           altText: data.altText || "",
-//           excerpt: data.excerpt || "",
-//           categories: data.categories?.map((c) => c.category?.name) || [],
-//           tags: data.tags?.map((t) => t.tag?.name) || [],
-//           status: data.status || "DRAFT",
-//           metaTitle: data.metaTitle || "",
-//           metaDescription: data.metaDescription || "",
-//           focusKeyword: data.focusKeyword || "",
-//         });
-//       }
-//       setLoading(false);
-//     };
-
-//     fetchPost();
-//   }, [slug]);
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     setSubmitting(true);
-
-//     let coverImageUrl = post.coverImage;
-
-//     if (post.imageFile instanceof File && post.imageFile.size > 0) {
-//       const formData = new FormData();
-//       formData.append("image", post.imageFile);
-
-//       const res = await fetch("/api/upload", {
-//         method: "POST",
-//         body: formData,
-//       });
-
-//       if (res.ok) {
-//         const { url } = await res.json();
-//         coverImageUrl = url;
-//         setPost((prev) => ({ ...prev, imageFile: null }));
-//       } else {
-//         alert("Image upload failed.");
-//         setSubmitting(false);
-//         return;
-//       }
-//     }
-
-//     await updatePost(slug, { ...post, coverImage: coverImageUrl });
-
-//     setSubmitting(false);
-//     router.push("/Blogs");
-//   };
-
-//   if (loading) {
-//     return (
-//       <div className="p-12 text-center text-gray-500 dark:text-gray-400">
-//         <Loader2 className="animate-spin w-6 h-6 mx-auto mb-2" />
-//         Loading post...
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="max-w-4xl mx-auto py-12 px-6">
-//       <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
-//         Edit Blog Post
-//       </h1>
-//       <form onSubmit={handleSubmit} className="space-y-6">
-//         {/* Title */}
-//         <div>
-//           <label
-//             htmlFor="title"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Title
-//           </label>
-//           <input
-//             id="title"
-//             type="text"
-//             value={post.title}
-//             onChange={(e) => setPost({ ...post, title: e.target.value })}
-//             required
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Excerpt */}
-//         <div>
-//           <label
-//             htmlFor="excerpt"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Excerpt
-//           </label>
-//           <textarea
-//             id="excerpt"
-//             value={post.excerpt}
-//             onChange={(e) => setPost({ ...post, excerpt: e.target.value })}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Cover Image Upload */}
-//         <div>
-//           <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-//             Cover Image
-//           </label>
-//           <input
-//             id="image"
-//             type="file"
-//             accept="image/*"
-//             onChange={(e) => {
-//               const file = e.target.files?.[0];
-//               if (file) {
-//                 setPost((prev) => ({ ...prev, imageFile: file }));
-//               }
-//             }}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//           {post.coverImage && (
-//             <img
-//               src={post.coverImage}
-//               alt={post.altText}
-//               className="w-32 h-32 object-cover mt-2 rounded-md border"
-//             />
-//           )}
-//         </div>
-
-//         {/* Meta Title */}
-//         <div>
-//           <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-//             Meta Title
-//           </label>
-//           <input
-//             type="text"
-//             value={post.metaTitle}
-//             onChange={(e) => setPost({ ...post, metaTitle: e.target.value })}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Meta Description */}
-//         <div>
-//           <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-//             Meta Description
-//           </label>
-//           <textarea
-//             value={post.metaDescription}
-//             onChange={(e) =>
-//               setPost({ ...post, metaDescription: e.target.value })
-//             }
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Focus Keyword */}
-//         <div>
-//           <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
-//             Focus Keyword
-//           </label>
-//           <input
-//             type="text"
-//             value={post.focusKeyword}
-//             onChange={(e) => setPost({ ...post, focusKeyword: e.target.value })}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Content */}
-//         <div>
-//           <label
-//             htmlFor="content"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Content
-//           </label>
-//           <textarea
-//             id="content"
-//             rows={12}
-//             value={post.content}
-//             onChange={(e) => setPost({ ...post, content: e.target.value })}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Tags */}
-//         <div>
-//           <label
-//             htmlFor="tags"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Tags (comma-separated)
-//           </label>
-//           <input
-//             id="tags"
-//             type="text"
-//             value={post.tags.join(", ")}
-//             onChange={(e) =>
-//               setPost({
-//                 ...post,
-//                 tags: e.target.value.split(",").map((t) => t.trim()),
-//               })
-//             }
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Categories */}
-//         <div>
-//           <label
-//             htmlFor="categories"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Categories (comma-separated)
-//           </label>
-//           <input
-//             id="categories"
-//             type="text"
-//             value={post.categories.join(", ")}
-//             onChange={(e) =>
-//               setPost({
-//                 ...post,
-//                 categories: e.target.value.split(",").map((c) => c.trim()),
-//               })
-//             }
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           />
-//         </div>
-
-//         {/* Status */}
-//         <div>
-//           <label
-//             htmlFor="status"
-//             className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-//           >
-//             Status
-//           </label>
-//           <select
-//             id="status"
-//             value={post.status}
-//             onChange={(e) => setPost({ ...post, status: e.target.value })}
-//             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-//           >
-//             <option value="DRAFT">Draft</option>
-//             <option value="PUBLISHED">Published</option>
-//           </select>
-//         </div>
-
-//         {/* Submit Button */}
-//         <div className="flex justify-end">
-//           <button
-//             type="submit"
-//             disabled={submitting}
-//             className="px-6 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-50"
-//           >
-//             {submitting ? "Saving..." : "Save Changes"}
-//           </button>
-//         </div>
-//       </form>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -312,13 +16,30 @@ import {
 } from "lucide-react";
 
 import { updatePost, getPostBySlug } from "@/app/actions/editPost";
+import { getAllCategories } from "@/app/actions/getCategories";
 export default function EditPostPage() {
   const router = useRouter();
   const { slug } = useParams();
-
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("content");
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await getAllCategories();
+        setCategories(res);
+        console.log(res, "gggggggggg");
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const [post, setPost] = useState({
     title: "",
@@ -346,8 +67,8 @@ export default function EditPostPage() {
           content: data.content || "",
           coverImage: data.coverImage || "",
           altText: data.altText || "",
-          categories: data.categories?.map((c) => c.category.name) || [],
-          tags: data.tags?.map((t) => t.tag.name) || [],
+          categories: data.categories?.map((c) => c.slug) || [],
+          tags: data.tags?.map((t) => t.name) || [],
           status: data.status || "DRAFT",
           metaTitle: data.metaTitle || "",
           metaDescription: data.metaDescription || "",
@@ -385,6 +106,8 @@ export default function EditPostPage() {
         return;
       }
     }
+
+    console.log(post, "hhhhhhhhhhhhhhhhhhhhh");
 
     await updatePost(slug, {
       ...post,
@@ -709,20 +432,45 @@ export default function EditPostPage() {
                         <Folder className="w-4 h-4 mr-2" />
                         Categories
                       </label>
-                      <input
-                        type="text"
-                        value={post.categories.join(", ")}
-                        onChange={(e) =>
-                          setPost({
-                            ...post,
-                            categories: e.target.value
-                              .split(",")
-                              .map((c) => c.trim()),
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Enter categories separated by commas..."
-                      />
+
+                      {categories.length === 0 ? (
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          No categories found.
+                        </p>
+                      ) : (
+                        <div className="space-y-2">
+                          {categories.map((category) => {
+                            const isChecked = post.categories.includes(
+                              category.slug
+                            ); // ← match by slug
+                            return (
+                              <label
+                                key={category.slug}
+                                className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => {
+                                    setPost((prev) => ({
+                                      ...prev,
+                                      categories: isChecked
+                                        ? prev.categories.filter(
+                                            (slug) => slug !== category.slug
+                                          )
+                                        : [...prev.categories, category.slug],
+                                    }));
+                                  }}
+                                  className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800"
+                                />
+                                <span className="text-gray-700 dark:text-gray-300">
+                                  {category.name}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
 
                     {/* Status */}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { createPost, saveDraft } from "@/app/actions/createPost";
+import { getAllCategories } from "@/app/actions/getCategories";
 import {
   FiBold,
   FiItalic,
@@ -281,6 +282,7 @@ export default function EnhancedCreatePostPage() {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [focusKeyword, setFocusKeyword] = useState("");
+  const [loading, setLoading] = useState(true);
 
   // Validation state
   const [validationErrors, setValidationErrors] = useState({});
@@ -290,16 +292,18 @@ export default function EnhancedCreatePostPage() {
 
   // Mock categories data
   useEffect(() => {
-    setCategories([
-      { id: "technology", name: "Technology", slug: "technology" },
-      { id: "design", name: "Design", slug: "design" },
-      { id: "business", name: "Business", slug: "business" },
-      { id: "marketing", name: "Marketing", slug: "marketing" },
-      { id: "development", name: "Development", slug: "development" },
-      { id: "ai-ml", name: "AI & ML", slug: "ai-ml" },
-      { id: "mobile", name: "Mobile", slug: "mobile" },
-      { id: "web", name: "Web", slug: "web" },
-    ]);
+    const fetchCategories = async () => {
+      try {
+        const res = await getAllCategories();
+        setCategories(res);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   // Auto-generate slug from title
@@ -361,10 +365,9 @@ export default function EnhancedCreatePostPage() {
     formData.append("metaDescription", metaDescription);
     formData.append("focusKeyword", focusKeyword);
 
-     if (coverImageFile) {
+    if (coverImageFile) {
       formData.append("image", coverImageFile);
     }
-
 
     try {
       const result = await saveDraft(formData);
@@ -438,8 +441,14 @@ export default function EnhancedCreatePostPage() {
     formData.append("excerpt", excerpt);
     formData.append("tags", JSON.stringify(tags));
     formData.append("categories", JSON.stringify(selectedCategories));
+
+    console.log(selectedCategories);
     formData.append("author", author);
-    formData.append("publishDate", publishDate);
+    formData.append(
+      "publishDate",
+      status === "PUBLISHED" ? new Date().toISOString() : null
+    );
+
     formData.append("status", status);
     formData.append("altText", altText);
     formData.append("metaTitle", metaTitle);
@@ -817,24 +826,31 @@ export default function EnhancedCreatePostPage() {
                 Categories
               </h3>
               <div className="max-h-48 overflow-y-auto">
-                <div className="space-y-2">
-                  {categories.map((category) => (
-                    <label
-                      key={category.id}
-                      className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedCategories.includes(category.id)}
-                        onChange={() => handleCategoryToggle(category.id)}
-                        className="rounded border-gray-300 dark:border-gray-600 text-orange-600 focus:ring-orange-500 dark:bg-gray-800"
-                      />
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {category.name}
-                      </span>
-                    </label>
-                  ))}
-                </div>
+                {loading ? (
+                  // Show animation while categories are loading
+                  <div className="flex items-center justify-center p-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-orange-500" />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {categories.map((category) => (
+                      <label
+                        key={category.id}
+                        className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCategories.includes(category.id)}
+                          onChange={() => handleCategoryToggle(category.id)}
+                          className="rounded border-gray-300 dark:border-gray-600 text-orange-600 focus:ring-orange-500 dark:bg-gray-800"
+                        />
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {category.name}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </div>
               {validationErrors.categories && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-400">

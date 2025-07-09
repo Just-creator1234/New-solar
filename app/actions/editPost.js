@@ -2,14 +2,32 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+// export async function getPostBySlug(slug) {
+//   try {
+//     const post = await prisma.post.findUnique({
+//       where: { slug },
+//       include: {
+//         categories: true,
+//         tags: true,
+//         author: true,
+//       },
+//     });
+//     return post;
+//   } catch (error) {
+//     console.error("Error fetching post:", error);
+//     return null;
+//   }
+// }
+
+// app/actions/editPost.js
 export async function getPostBySlug(slug) {
   try {
     const post = await prisma.post.findUnique({
       where: { slug },
       include: {
+        categories: true, // categories: Category[] directly
+        tags: true,
         author: true,
-        categories: { include: { category: true } },
-        tags: { include: { tag: true } },
       },
     });
     return post;
@@ -21,20 +39,26 @@ export async function getPostBySlug(slug) {
 
 export async function updatePost(slug, data) {
   try {
-    // Find the post by slug to get its ID
     const existing = await prisma.post.findUnique({
       where: { slug },
     });
 
     if (!existing) throw new Error(`Post with slug "${slug}" not found`);
 
-    const validTags = (data.tags || []).filter((tag) => tag?.name && tag?.slug);
-    const validCategories = (data.categories || []).filter(
-      (cat) => cat?.name && cat?.slug
-    );
+    // Step 1: Resolve category slugs to actual records
+    const categoryRecords = await prisma.category.findMany({
+      where: {
+        slug: { in: data.categories || [] },
+      },
+    });
+    const tagRecords = await prisma.tag.findMany({
+      where: {
+        name: { in: data.tags || [] }, // assuming data.tags = ["tech", "design"]
+      },
+    });
 
     const updatedPost = await prisma.post.update({
-      where: { id: existing.id }, // ✅ Use actual post ID
+      where: { id: existing.id },
       data: {
         title: data.title,
         excerpt: data.excerpt,
@@ -45,39 +69,18 @@ export async function updatePost(slug, data) {
         metaDescription: data.metaDescription,
         focusKeyword: data.focusKeyword,
 
-        tags: {
-          deleteMany: {}, // Clear existing
-          create: validTags.map((tag) => ({
-            tag: {
-              connectOrCreate: {
-                where: { slug: tag.slug },
-                create: {
-                  name: tag.name,
-                  slug: tag.slug,
-                },
-              },
-            },
-          })),
+        // ✅ Connect only existing category records
+        categories: {
+          set: categoryRecords.map((cat) => ({ id: cat.id })),
         },
 
-        categories: {
-          deleteMany: {}, // Clear existing
-          create: validCategories.map((category) => ({
-            category: {
-              connectOrCreate: {
-                where: { slug: category.slug },
-                create: {
-                  name: category.name,
-                  slug: category.slug,
-                },
-              },
-            },
-          })),
+        tags: {
+          set: tagRecords.map((tag) => ({ id: tag.id })),
         },
       },
       include: {
-        tags: { include: { tag: true } },
-        categories: { include: { category: true } },
+        tags: true,
+        categories: true,
         author: true,
       },
     });

@@ -5,6 +5,7 @@ import { Eye, Edit3, Trash2, Plus, Search, Calendar, User } from "lucide-react";
 import { getPosts } from "@/app/actions/getPosts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import BlogItem from "./BlogItem";
 
 const BlogPostsManager = () => {
   const [filter, setFilter] = useState("ALL");
@@ -16,16 +17,12 @@ const BlogPostsManager = () => {
     const fetchPosts = async () => {
       const status = filter === "ALL" ? undefined : filter;
       const data = await getPosts(status);
+      console.log(data, "hhhhhhhhhhhh");
       setPosts(data);
     };
     fetchPosts();
   }, [filter]);
 
-  const handleDelete = (postId) => {
-    if (window.confirm("Are you sure you want to delete this post?")) {
-      setPosts(posts.filter((post) => post.id !== postId));
-    }
-  };
   const handlePublishNow = async () => {
     try {
       // Get only scheduled posts from current state
@@ -54,6 +51,7 @@ const BlogPostsManager = () => {
       // Refresh updated list
       const data = await getPosts("SCHEDULED");
       setPosts(data);
+      console.log(posts);
     } catch (error) {
       console.error("Error publishing now:", error);
       alert("Something went wrong.");
@@ -252,14 +250,12 @@ const BlogPostsManager = () => {
                         <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
                           Categories:
                         </span>
-                        {post.categories.map((categoryObj, i) => (
+                        {post.categories.map((category, i) => (
                           <span
                             key={i}
                             className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-md border border-blue-200 dark:border-blue-800"
                           >
-                            {typeof categoryObj === "string"
-                              ? categoryObj
-                              : categoryObj.category?.name}
+                            {category.name}
                           </span>
                         ))}
                       </div>
@@ -307,14 +303,7 @@ const BlogPostsManager = () => {
                       <Edit3 size={16} />
                       <span className="hidden sm:inline">Edit</span>
                     </Link>
-                    <button
-                      onClick={() => handleDelete(post.id)}
-                      className="flex items-center gap-2 px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                      title="Delete post"
-                    >
-                      <Trash2 size={16} />
-                      <span className="hidden sm:inline">Delete</span>
-                    </button>
+                    <BlogItem key={post.id} post={post} />
                   </div>
                 </div>
               </div>
