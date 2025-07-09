@@ -357,6 +357,9 @@ export default function EnhancedCreatePostPage() {
     formData.append("categories", JSON.stringify(selectedCategories));
     formData.append("tags", JSON.stringify(tags));
     formData.append("authorId", "sunlink-author");
+    formData.append("metaTitle", metaTitle);
+    formData.append("metaDescription", metaDescription);
+    formData.append("focusKeyword", focusKeyword);
 
     try {
       const result = await saveDraft(formData);
@@ -438,7 +441,7 @@ export default function EnhancedCreatePostPage() {
     formData.append("altText", altText);
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
-    formData.append("focusKeyword",focusKeyword)
+    formData.append("focusKeyword", focusKeyword);
     formData.append("secret", "blackbills");
     formData.append("authorId", "sunlink-author");
 
@@ -680,18 +683,6 @@ export default function EnhancedCreatePostPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Author
-                    </label>
-                    <input
-                      value={author}
-                      onChange={(e) => setAuthor(e.target.value)}
-                      type="text"
-                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Status
                     </label>
                     <select
@@ -705,22 +696,7 @@ export default function EnhancedCreatePostPage() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Visibility
-                    </label>
-                    <select
-                      value={visibility}
-                      onChange={(e) => setVisibility(e.target.value)}
-                      className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white"
-                    >
-                      <option value="public">Public</option>
-                      <option value="private">Private</option>
-                      <option value="password">Password Protected</option>
-                    </select>
-                  </div>
-
-                  {status === "scheduled" && (
+                  {status === "SCHEDULED" && (
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Publish Date
@@ -729,40 +705,8 @@ export default function EnhancedCreatePostPage() {
                         value={publishDate}
                         onChange={(e) => setPublishDate(e.target.value)}
                         type="datetime-local"
-                        className={`w-full p-3 rounded-lg border ${
-                          validationErrors.publishDate
-                            ? "border-red-300 dark:border-red-600"
-                            : "border-gray-300 dark:border-gray-600"
-                        } focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white`}
+                        className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white"
                       />
-                      {validationErrors.publishDate && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                          {validationErrors.publishDate}
-                        </p>
-                      )}
-                    </div>
-                  )}
-
-                  {visibility === "password" && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Password
-                      </label>
-                      <input
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        type="password"
-                        className={`w-full p-3 rounded-lg border ${
-                          validationErrors.password
-                            ? "border-red-300 dark:border-red-600"
-                            : "border-gray-300 dark:border-gray-600"
-                        } focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white dark:bg-gray-800 dark:text-white`}
-                      />
-                      {validationErrors.password && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                          {validationErrors.password}
-                        </p>
-                      )}
                     </div>
                   )}
                 </div>
