@@ -361,6 +361,11 @@ export default function EnhancedCreatePostPage() {
     formData.append("metaDescription", metaDescription);
     formData.append("focusKeyword", focusKeyword);
 
+     if (coverImageFile) {
+      formData.append("image", coverImageFile);
+    }
+
+
     try {
       const result = await saveDraft(formData);
       if (result.success) {
@@ -436,8 +441,6 @@ export default function EnhancedCreatePostPage() {
     formData.append("author", author);
     formData.append("publishDate", publishDate);
     formData.append("status", status);
-    formData.append("visibility", visibility.toUpperCase());
-    formData.append("password", password);
     formData.append("altText", altText);
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);

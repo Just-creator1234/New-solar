@@ -40,8 +40,10 @@ export async function updatePost(slug, data) {
         excerpt: data.excerpt,
         content: data.content,
         coverImage: data.coverImage,
-        altText: data.altText,
         status: data.status,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        focusKeyword: data.focusKeyword,
 
         tags: {
           deleteMany: {}, // Clear existing

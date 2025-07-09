@@ -15,12 +15,16 @@ export default function EditPostPage() {
   const [post, setPost] = useState({
     title: "",
     content: "",
-    coverImage: "",
+    coverImage: "", // this will hold the uploaded file URL (optional)
+    imageFile: null, // new: File object
     altText: "",
     excerpt: "",
     categories: [],
     tags: [],
     status: "DRAFT",
+    metaTitle: "",
+    metaDescription: "",
+    focusKeyword: "",
   });
 
   useEffect(() => {
@@ -37,6 +41,9 @@ export default function EditPostPage() {
           categories: data.categories?.map((c) => c.category?.name) || [],
           tags: data.tags?.map((t) => t.tag?.name) || [],
           status: data.status || "DRAFT",
+          metaTitle: data.metaTitle || "",
+          metaDescription: data.metaDescription || "",
+          focusKeyword: data.focusKeyword || "",
         });
       }
       setLoading(false);
@@ -48,7 +55,31 @@ export default function EditPostPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    await updatePost(slug, post);
+
+    let coverImageUrl = post.coverImage;
+
+    if (post.imageFile instanceof File && post.imageFile.size > 0) {
+      const formData = new FormData();
+      formData.append("image", post.imageFile);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (res.ok) {
+        const { url } = await res.json();
+        coverImageUrl = url;
+        setPost((prev) => ({ ...prev, imageFile: null }));
+      } else {
+        alert("Image upload failed.");
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    await updatePost(slug, { ...post, coverImage: coverImageUrl });
+
     setSubmitting(false);
     router.push("/Blogs");
   };
@@ -102,39 +133,73 @@ export default function EditPostPage() {
           />
         </div>
 
-        {/* Cover Image */}
+        {/* Cover Image Upload */}
         <div>
-          <label
-            htmlFor="coverImage"
-            className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            Cover Image URL
+          <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Cover Image
           </label>
           <input
-            id="coverImage"
+            id="image"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                setPost((prev) => ({ ...prev, imageFile: file }));
+              }
+            }}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          />
+          {post.coverImage && (
+            <img
+              src={post.coverImage}
+              alt={post.altText}
+              className="w-32 h-32 object-cover mt-2 rounded-md border"
+            />
+          )}
+        </div>
+
+        {/* Meta Title */}
+        <div>
+          <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Meta Title
+          </label>
+          <input
             type="text"
-            value={post.coverImage}
-            onChange={(e) => setPost({ ...post, coverImage: e.target.value })}
+            value={post.metaTitle}
+            onChange={(e) => setPost({ ...post, metaTitle: e.target.value })}
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           />
         </div>
 
-        {/* Alt Text */}
+        {/* Meta Description */}
         <div>
-          <label
-            htmlFor="altText"
-            className="block font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
-            Image Alt Text
+          <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Meta Description
           </label>
-          <input
-            id="altText"
-            type="text"
-            value={post.altText}
-            onChange={(e) => setPost({ ...post, altText: e.target.value })}
+          <textarea
+            value={post.metaDescription}
+            onChange={(e) =>
+              setPost({ ...post, metaDescription: e.target.value })
+            }
             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
           />
         </div>
+
+        {/* Focus Keyword */}
+        <div>
+          <label className="block font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Focus Keyword
+          </label>
+          <input
+            type="text"
+            value={post.focusKeyword}
+            onChange={(e) => setPost({ ...post, focusKeyword: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+          />
+        </div>
+
+      
 
         {/* Content */}
         <div>

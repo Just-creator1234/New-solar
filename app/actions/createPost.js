@@ -53,10 +53,13 @@ export async function createPost(formData) {
     let coverImageUrl = null;
     const imageFile = formData.get("image");
     if (imageFile && imageFile.size > 0) {
-      const uploadResponse = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      const uploadResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (uploadResponse.ok) {
         const { url } = await uploadResponse.json();
@@ -132,8 +135,8 @@ export async function createPost(formData) {
   }
 }
 
-
 export async function saveDraft(formData) {
+  console.log(formData, "ggggggggggggggg");
   try {
     const data = {
       title: formData.get("title"),
@@ -143,6 +146,9 @@ export async function saveDraft(formData) {
       status: "DRAFT",
       categories: JSON.parse(formData.get("categories") || "[]"), // slugs
       tags: JSON.parse(formData.get("tags") || "[]"), // names
+      metaTitle: formData.get("metaTitle"),
+      metaDescription: formData.get("metaDescription"),
+      focusKeyword: formData.get("focusKeyword"),
     };
 
     // Auto-generate slug if not provided
@@ -157,10 +163,30 @@ export async function saveDraft(formData) {
 
     // Calculate word count and reading time
     const wordCount = data.content
-      ? data.content.replace(/<[^>]*>/g, "").split(/\s+/).filter((word) => word.length > 0).length
+      ? data.content
+          .replace(/<[^>]*>/g, "")
+          .split(/\s+/)
+          .filter((word) => word.length > 0).length
       : 0;
 
     const readingTime = Math.ceil(wordCount / 200);
+
+    let coverImageUrl = null;
+    const imageFile = formData.get("image");
+    if (imageFile && imageFile.size > 0) {
+      const uploadResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_SITE_URL}/api/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (uploadResponse.ok) {
+        const { url } = await uploadResponse.json();
+        coverImageUrl = url;
+      }
+    }
 
     // Resolve category slugs
     const categoryRecords = await prisma.category.findMany({
@@ -188,6 +214,10 @@ export async function saveDraft(formData) {
         status: "DRAFT",
         wordCount,
         readingTime,
+        coverImage: coverImageUrl,
+        metaTitle: data.metaTitle,
+        metaDescription: data.metaDescription,
+        focusKeyword: data.focusKeyword,
         authorId: "sunlink-author", // or your fixed author ID
         categories: {
           create: categoryRecords.map((cat) => ({
