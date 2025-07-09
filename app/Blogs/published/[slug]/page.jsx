@@ -126,6 +126,7 @@ export async function generateMetadata({ params }) {
     },
   });
 
+  console.log(post,"metaaaaaaa dataaaaaaa")
   if (!post) return notFound();
 
   return {
