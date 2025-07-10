@@ -459,10 +459,48 @@ export default function EnhancedCreatePostPage() {
     );
   };
 
+  // const handleUpload = (e) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) return;
+
+  //   const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+  //   if (file.size > maxSize) {
+  //     alert("Image is too large. Please upload a file smaller than 10MB.");
+  //     return;
+  //   }
+
+  //   setCoverImageFile(file);
+  //   const previewUrl = URL.createObjectURL(file);
+  //   setCoverImageUrl(previewUrl);
+  // };
+
   const handleUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+    const errors = {};
+
+    // Validate file size
+    if (file.size > maxSize) {
+      errors.coverImage = "Image must be less than 10MB.";
+    }
+
+    // Validate MIME type
+    if (!allowedTypes.includes(file.type)) {
+      errors.coverImage =
+        "Unsupported image format. Only JPEG, PNG, and WebP are allowed.";
+    }
+
+    // If there are any validation errors, stop here
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
+    // Clear previous errors and proceed
+    setValidationErrors({});
     setCoverImageFile(file);
     const previewUrl = URL.createObjectURL(file);
     setCoverImageUrl(previewUrl);
@@ -740,7 +778,7 @@ export default function EnhancedCreatePostPage() {
                       <div className="text-center">
                         <FiImage className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
                         <span className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                          Upload a cover image
+                          Upload a cover image Limit 10mb
                         </span>
                       </div>
                     )}
@@ -752,6 +790,12 @@ export default function EnhancedCreatePostPage() {
                     />
                   </div>
                 </div>
+
+                {validationErrors.coverImage && (
+                  <p className="text-sm text-red-500 mt-2">
+                    {validationErrors.coverImage}
+                  </p>
+                )}
 
                 {coverImageUrl && (
                   <div>
