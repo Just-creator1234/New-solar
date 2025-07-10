@@ -1,91 +1,3 @@
-// import { notFound } from 'next/navigation';
-// import { Calendar, User } from 'lucide-react';
-// import prisma from '@/lib/prisma';
-
-// export async function generateStaticParams() {
-//   const posts = await prisma.post.findMany({
-//     where: { status: 'PUBLISHED' },
-//     select: { slug: true },
-//   });
-
-//   return posts.map(post => ({ slug: post.slug }));
-// }
-
-// export async function generateMetadata({ params }) {
-//       const { slug } = await params;
-//   const post = await prisma.post.findUnique({
-//     where: { slug: slug },
-//   });
-
-//   if (!post) return notFound();
-
-//   return {
-//     title: post.metaTitle || post.title,
-//     description: post.metaDescription || post.excerpt,
-//   };
-// }
-
-// export default async function PublishedPostPage({ params }) {
-//   const post = await prisma.post.findUnique({
-//     where: { slug: params.slug },
-//     include: {
-//       author: true,
-//       tags: { include: { tag: true } },
-//       categories: { include: { category: true } },
-//     },
-//   });
-
-//   if (!post || post.status !== 'PUBLISHED') return notFound();
-
-//   return (
-//     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-6">
-//       <div className="max-w-4xl mx-auto">
-//         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-//           {post.title}
-//         </h1>
-
-//         <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-//           <div className="flex items-center gap-1">
-//             <User size={16} />
-//             <span>{post.author?.name || 'Unknown Author'}</span>
-//           </div>
-//           <div className="flex items-center gap-1">
-//             <Calendar size={16} />
-//             <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-//           </div>
-//         </div>
-
-//         {/* Tags */}
-//         <div className="flex flex-wrap gap-2 mb-4">
-//           {post.tags.map(({ tag }) => (
-//             <span
-//               key={tag.id}
-//               className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-700 text-blue-800 dark:text-white rounded-full"
-//             >
-//               #{tag.name}
-//             </span>
-//           ))}
-//         </div>
-
-//         {/* Featured Image */}
-//         {post.coverImage && (
-//           <img
-//             src={post.coverImage}
-//             alt={post.altText || post.title}
-//             className="w-full h-auto rounded-lg shadow mb-8"
-//           />
-//         )}
-
-//         {/* Post Content */}
-//         <div
-//           className="prose dark:prose-invert max-w-none"
-//           dangerouslySetInnerHTML={{ __html: post.content }}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
-
 import { notFound } from "next/navigation";
 import {
   Calendar,
@@ -112,21 +24,33 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-
   const post = await prisma.post.findUnique({
     where: { slug },
-    select: {
-      title: true,
-      metaTitle: true,
-      excerpt: true,
-      metaDescription: true,
-      coverImage: true,
-      author: { select: { name: true } },
-      createdAt: true,
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+      tags: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      categories: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
     },
   });
 
-  console.log(post,"metaaaaaaa dataaaaaaa")
+  console.log(post, "metaaaaaaa dataaaaaaa");
   if (!post) return notFound();
 
   return {
@@ -155,17 +79,20 @@ export default async function PublishedPostPage({ params }) {
   const post = await prisma.post.findUnique({
     where: { slug },
     include: {
-      author: {
+      author: true,
+      tags: {
         select: {
           id: true,
           name: true,
-          email: true,
-
-          //bio: true,
         },
       },
-      tags: { include: { tag: true } },
-      categories: { include: { category: true } },
+      categories: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
     },
   });
 
@@ -214,7 +141,7 @@ export default async function PublishedPostPage({ params }) {
         <header className="mb-12">
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
-              {post.categories.map(({ category }) => (
+              {post.categories.map((category) => (
                 <span
                   key={category.id}
                   className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
@@ -295,10 +222,10 @@ export default async function PublishedPostPage({ params }) {
               Tags
             </h3>
             <div className="flex flex-wrap gap-3">
-              {post.tags.map(({ tag }) => (
+              {post.tags.map((tag) => (
                 <Link
                   key={tag.id}
-                  href={`/blog/tags/${tag.slug}`}
+                  href={`/blog/tags/${tag.slug ?? tag.name.toLowerCase()}`}
                   className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 transition-colors"
                 >
                   #{tag.name}

@@ -142,7 +142,7 @@ export default async function DraftPostPage({ params }) {
               </h3>
             </div>
             <div className="flex flex-wrap gap-2">
-              {post.tags.map(({ tag }) => (
+              {post.tags.map((tag) => (
                 <span
                   key={tag.id}
                   className="inline-flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 transition-colors cursor-pointer"

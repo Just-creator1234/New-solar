@@ -5,6 +5,8 @@ import { createPost, saveDraft } from "@/app/actions/createPost";
 import { getAllCategories } from "@/app/actions/getCategories";
 import { useAutoSave } from "@/hook/useAutoSave";
 import { formatDistanceToNow } from "date-fns";
+import { useTransition } from "react";
+import { createCategory } from "@/app/actions/categoryActions"
 
 import {
   FiBold,
@@ -256,6 +258,8 @@ export default function EnhancedCreatePostPage() {
   const [excerpt, setExcerpt] = useState("");
   const [tags, setTags] = useState([]);
   const [newTag, setNewTag] = useState("");
+  const [newCategory, setNewCategory] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   // Media state
   const [coverImageFile, setCoverImageFile] = useState(null);
@@ -334,6 +338,22 @@ export default function EnhancedCreatePostPage() {
     await saveDraft(formData);
   }
 
+  const handleAddCategory = (e) => {
+    e.preventDefault();
+    if (!newCategory.trim()) return;
+
+    startTransition(async () => {
+      const result = await createCategory(newCategory);
+
+      if (result.success) {
+        setCategories((prev) => [...prev, result.category]);
+        setSelectedCategories((prev) => [...prev, result.category.id]);
+        setNewCategory("");
+      } else {
+        console.error(result.error);
+      }
+    });
+  };
   // Mock categories data
   useEffect(() => {
     const fetchCategories = async () => {
@@ -486,7 +506,7 @@ export default function EnhancedCreatePostPage() {
 
     try {
       const result = await createPost(formData);
-      console.log(result,"hhhhhhhhhhhhhhhhhhhhoppppppppppp");
+      console.log(result, "hhhhhhhhhhhhhhhhhhhhoppppppppppp");
 
       alert(
         `Post ${status === "published" ? "published" : "saved"} successfully!`
@@ -860,9 +880,9 @@ export default function EnhancedCreatePostPage() {
               <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">
                 Categories
               </h3>
+
               <div className="max-h-48 overflow-y-auto">
                 {loading ? (
-                  // Show animation while categories are loading
                   <div className="flex items-center justify-center p-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-orange-500" />
                   </div>
@@ -887,6 +907,26 @@ export default function EnhancedCreatePostPage() {
                   </div>
                 )}
               </div>
+
+              {/* ✅ Add New Category Input */}
+              <div className="mt-4">
+                <form onSubmit={handleAddCategory} className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="Add new category"
+                    className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-sm text-gray-900 dark:text-white"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3 py-2 bg-orange-600 text-white rounded text-sm hover:bg-orange-700 transition"
+                  >
+                    Add
+                  </button>
+                </form>
+              </div>
+
               {validationErrors.categories && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {validationErrors.categories}
