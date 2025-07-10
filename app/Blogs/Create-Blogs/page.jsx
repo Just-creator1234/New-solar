@@ -410,6 +410,35 @@ export default function EnhancedCreatePostPage() {
   }, [content]);
 
   const handleSaveDraft = async () => {
+
+       let coverImageUrl = "";
+
+    // ⬆️ Upload image first, if present
+    if (coverImageFile) {
+      const imageFormData = new FormData();
+      imageFormData.append("image", coverImageFile);
+
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: imageFormData,
+        });
+
+        if (uploadRes.ok) {
+          const { url } = await uploadRes.json();
+          coverImageUrl = url;
+        } else {
+          alert("Image upload failed.");
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (error) {
+        console.error("Image upload error:", error);
+        alert("Unable to upload image.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
     const formData = new FormData();
     formData.append("title", title);
     formData.append("slug", slug);
@@ -423,8 +452,8 @@ export default function EnhancedCreatePostPage() {
     formData.append("focusKeyword", focusKeyword);
     formData.append("status", "DRAFT");
 
-    if (coverImageFile) {
-      formData.append("image", coverImageFile);
+   if (coverImageUrl) {
+      formData.append("coverImage", coverImageUrl);
     }
 
     try {
@@ -458,21 +487,6 @@ export default function EnhancedCreatePostPage() {
         : [...prev, categoryId]
     );
   };
-
-  // const handleUpload = (e) => {
-  //   const file = e.target.files?.[0];
-  //   if (!file) return;
-
-  //   const maxSize = 10 * 1024 * 1024; // 10MB in bytes
-  //   if (file.size > maxSize) {
-  //     alert("Image is too large. Please upload a file smaller than 10MB.");
-  //     return;
-  //   }
-
-  //   setCoverImageFile(file);
-  //   const previewUrl = URL.createObjectURL(file);
-  //   setCoverImageUrl(previewUrl);
-  // };
 
   const handleUpload = (e) => {
     const file = e.target.files?.[0];
@@ -521,6 +535,67 @@ export default function EnhancedCreatePostPage() {
     return Object.keys(errors).length === 0;
   };
 
+  // const handleSubmit = async (action) => {
+  //   if (!validateForm()) {
+  //     alert("Please fix the validation errors before publishing.");
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+
+  //   let finalStatus = status;
+  //   if (action === "publish" && status !== "SCHEDULED") {
+  //     finalStatus = "PUBLISHED";
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("status", finalStatus); // ✅ dynamically resolved
+  //   formData.append("action", action);
+
+  //   // Append all other fields
+  //   formData.append("title", title);
+  //   formData.append("slug", slug);
+  //   formData.append("content", content);
+  //   formData.append("excerpt", excerpt);
+  //   formData.append("tags", JSON.stringify(tags));
+  //   formData.append("categories", JSON.stringify(selectedCategories));
+  //   formData.append("authorId", "sunlink-author");
+  //   formData.append("altText", altText);
+  //   formData.append("metaTitle", metaTitle);
+  //   formData.append("metaDescription", metaDescription);
+  //   formData.append("focusKeyword", focusKeyword);
+  //   formData.append("secret", "blackbills");
+
+  //   if (status === "PUBLISHED" || status === "SCHEDULED") {
+  //     formData.append("publishDate", new Date().toISOString());
+  //   }
+
+  //   if (coverImageFile) {
+  //     formData.append("image", coverImageFile);
+  //   }
+
+  //   try {
+  //     await createPost(formData);
+  //     router.push("/Blogs");
+
+  //     // Clear form
+  //     setTitle("");
+  //     setSlug("");
+  //     setContent("");
+  //     setExcerpt("");
+  //     setTags([]);
+  //     setSelectedCategories([]);
+  //     setCoverImageUrl("");
+  //     setCoverImageFile(null);
+  //     setAltText("");
+  //   } catch (err) {
+  //     console.error(err);
+  //     alert("Failed to save post.");
+  //   } finally {
+  //     setIsSubmitting(false);
+  //   }
+  // };
+
   const handleSubmit = async (action) => {
     if (!validateForm()) {
       alert("Please fix the validation errors before publishing.");
@@ -534,11 +609,39 @@ export default function EnhancedCreatePostPage() {
       finalStatus = "PUBLISHED";
     }
 
-    const formData = new FormData();
-    formData.append("status", finalStatus); // ✅ dynamically resolved
-    formData.append("action", action);
+    let coverImageUrl = "";
 
-    // Append all other fields
+    // ⬆️ Upload image first, if present
+    if (coverImageFile) {
+      const imageFormData = new FormData();
+      imageFormData.append("image", coverImageFile);
+
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: imageFormData,
+        });
+
+        if (uploadRes.ok) {
+          const { url } = await uploadRes.json();
+          coverImageUrl = url;
+        } else {
+          alert("Image upload failed.");
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (error) {
+        console.error("Image upload error:", error);
+        alert("Unable to upload image.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    // 📦 Build final form data for post creation
+    const formData = new FormData();
+    formData.append("status", finalStatus);
+    formData.append("action", action);
     formData.append("title", title);
     formData.append("slug", slug);
     formData.append("content", content);
@@ -556,15 +659,16 @@ export default function EnhancedCreatePostPage() {
       formData.append("publishDate", new Date().toISOString());
     }
 
-    if (coverImageFile) {
-      formData.append("image", coverImageFile);
+    // ✅ Use Cloudinary URL if uploaded
+    if (coverImageUrl) {
+      formData.append("coverImage", coverImageUrl);
     }
 
     try {
       await createPost(formData);
       router.push("/Blogs");
 
-      // Clear form
+      // Reset form state
       setTitle("");
       setSlug("");
       setContent("");

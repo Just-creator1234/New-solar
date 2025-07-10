@@ -36,22 +36,7 @@ export async function createPost(formData) {
       .filter(Boolean).length;
     const readingTime = Math.ceil(wordCount / 200);
 
-    // Upload cover image
-    let coverImageUrl = null;
-    const imageFile = formData.get("image");
-    if (imageFile && imageFile.size > 0) {
-      const uploadResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      if (uploadResponse.ok) {
-        const { url } = await uploadResponse.json();
-        coverImageUrl = url;
-      }
-    }
+    const coverImageUrl = formData.get("coverImage") || null;
 
     const categoryRecords = await prisma.category.findMany({
       where: {
@@ -152,21 +137,7 @@ export async function saveDraft(formData) {
       : 0;
     const readingTime = Math.ceil(wordCount / 200);
 
-    let coverImageUrl = null;
-    const imageFile = formData.get("image");
-    if (imageFile && imageFile.size > 0) {
-      const uploadResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_SITE_URL}/api/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      if (uploadResponse.ok) {
-        const { url } = await uploadResponse.json();
-        coverImageUrl = url;
-      }
-    }
+    const coverImageUrl = formData.get("coverImage") || null;
 
     const categoryRecords = await prisma.category.findMany({
       where: {

@@ -3,17 +3,17 @@ import { uploadFile } from "@/lib/upload";
 
 export async function POST(request) {
   try {
-    const maxSize = 10_000_000; // 1MB in bytes
-    if (file.size > maxSize) {
-      throw new Error("File size exceeds 1MB limit");
-    }
     const formData = await request.formData();
     const file = formData.get("image");
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
-
+    const maxSize = 10_000_000; // 1MB in bytes
+    if (file.size > maxSize) {
+      throw new Error("File size exceeds 1MB limit");
+    }
+    
     const url = await uploadFile(file, "blog-images");
 
     return NextResponse.json({ url });
