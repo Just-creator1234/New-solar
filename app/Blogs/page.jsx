@@ -75,7 +75,7 @@ const BlogPostsManager = () => {
   });
 
   console.log(posts, "ggggggggggggggg");
-  
+
   const getStatusColor = (status) => {
     switch (status) {
       case "PUBLISHED":

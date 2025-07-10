@@ -11,9 +11,6 @@ export async function createPost(formData) {
       return { error: "Unauthorized upload attempt" };
     }
 
-    const action = formData.get("action");
-    const status = action === "publish" ? "PUBLISHED" : "DRAFT";
-
     const data = {
       title: formData.get("title"),
       slug: formData.get("slug"),
@@ -21,7 +18,7 @@ export async function createPost(formData) {
       excerpt: formData.get("excerpt"),
       publishDate: formData.publishDate ? new Date(formData.publishDate) : null,
       altText: formData.get("altText"),
-      status,
+      status: formData.get("status"),
       categories: JSON.parse(formData.get("categories") || "[]"),
       tags: JSON.parse(formData.get("tags") || "[]"),
       metaTitle: formData.get("metaTitle"),
@@ -84,9 +81,9 @@ export async function createPost(formData) {
           title: data.title,
           content: data.content,
           excerpt: data.excerpt,
-          status,
+          status: data.status,
           publishDate: data.publishDate || new Date(),
-          publishedAt: status === "PUBLISHED" ? new Date() : null,
+          publishedAt: data.status === "PUBLISHED" ? new Date() : null,
           coverImage: coverImageUrl,
           altText: data.altText,
           wordCount,
@@ -116,7 +113,7 @@ export async function createPost(formData) {
         success: true,
         post: updatedPost,
         message: `Post ${
-          status === "PUBLISHED" ? "published" : "saved"
+          data.status === "PUBLISHED" ? "published" : "saved"
         } successfully!`,
       };
     }

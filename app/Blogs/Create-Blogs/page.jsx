@@ -421,6 +421,7 @@ export default function EnhancedCreatePostPage() {
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
     formData.append("focusKeyword", focusKeyword);
+    formData.append("status", "DRAFT");
 
     if (coverImageFile) {
       formData.append("image", coverImageFile);
@@ -481,7 +482,7 @@ export default function EnhancedCreatePostPage() {
     return Object.keys(errors).length === 0;
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (action) => {
     if (!validateForm()) {
       alert("Please fix the validation errors before publishing.");
       return;
@@ -489,29 +490,32 @@ export default function EnhancedCreatePostPage() {
 
     setIsSubmitting(true);
 
+    let finalStatus = status;
+    if (action === "publish" && status !== "SCHEDULED") {
+      finalStatus = "PUBLISHED";
+    }
+
     const formData = new FormData();
+    formData.append("status", finalStatus); // ✅ dynamically resolved
+    formData.append("action", action);
+
+    // Append all other fields
     formData.append("title", title);
     formData.append("slug", slug);
     formData.append("content", content);
     formData.append("excerpt", excerpt);
     formData.append("tags", JSON.stringify(tags));
     formData.append("categories", JSON.stringify(selectedCategories));
-    formData.append("action", "publish");
-
-    console.log(selectedCategories);
-    formData.append("author", author);
-    formData.append(
-      "publishDate",
-      status === "PUBLISHED" ? new Date().toISOString() : null
-    );
-
-    formData.append("status", status);
+    formData.append("authorId", "sunlink-author");
     formData.append("altText", altText);
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
     formData.append("focusKeyword", focusKeyword);
     formData.append("secret", "blackbills");
-    formData.append("authorId", "sunlink-author");
+
+    if (status === "PUBLISHED" || status === "SCHEDULED") {
+      formData.append("publishDate", new Date().toISOString());
+    }
 
     if (coverImageFile) {
       formData.append("image", coverImageFile);
@@ -519,13 +523,9 @@ export default function EnhancedCreatePostPage() {
 
     try {
       await createPost(formData);
-
       router.refresh();
 
-      // alert(
-      //   `Post ${status === "published" ? "published" : "saved"} successfully!`
-      // );
-
+      // Clear form
       setTitle("");
       setSlug("");
       setContent("");
@@ -585,7 +585,7 @@ export default function EnhancedCreatePostPage() {
               <button
                 type="submit"
                 name="action"
-                value="save"
+                value="draft"
                 onClick={handleSaveDraft}
                 disabled={status === "PUBLISHED"}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
@@ -598,7 +598,7 @@ export default function EnhancedCreatePostPage() {
                 type="submit"
                 name="action"
                 value="publish"
-                onClick={handleSubmit}
+                onClick={() => handleSubmit("publish")}
                 disabled={isSubmitting}
                 className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 disabled:opacity-50 transition"
               >
