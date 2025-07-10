@@ -1,10 +1,11 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
-import { getPosts } from "@/app/actions/getPosts";
+
 import {
   Calendar,
+  ChevronDown,
+  X,
   User,
   Tag,
   Folder,
@@ -25,22 +26,63 @@ import {
 } from "lucide-react";
 
 const SolarlinkBlogs = () => {
+  const [page, setPage] = useState(1);
   const [posts, setPosts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const data = await getPosts("PUBLISHED");
-        setPosts(data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedTag, setSelectedTag] = useState(null);
 
-    fetchPosts();
-  }, []);
+  const loadPosts = async (pageNumber) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/posts?page=${pageNumber}`);
+      const data = await res.json();
+      setPosts((prev) => [...prev, ...data.posts]);
+      setTotalPages(data.totalPages);
+    } catch (err) {
+      console.error("Error loading posts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPosts(page);
+  }, [page]);
+
+  const allCategories = [
+    ...new Map(
+      posts.flatMap((post) => post.categories || []).map((c) => [c.id, c])
+    ).values(),
+  ];
+
+  const allTags = [
+    ...new Map(
+      posts.flatMap((post) => post.tags || []).map((t) => [t.id, t])
+    ).values(),
+  ];
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearchTerm, selectedCategory, selectedTag]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 400);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+  const handleLoadMore = () => {
+    if (loading || page >= totalPages) return;
+    setPage((prev) => prev + 1);
+  };
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -64,9 +106,25 @@ const SolarlinkBlogs = () => {
     );
   }
 
-  const featuredPost = posts.find((post) => post.featured) || posts[0];
-  const regularPosts = posts.filter((post) => !post.featured);
+  const filteredPosts = posts.filter((post) => {
+    const matchesSearch = post.title
+      .toLowerCase()
+      .includes(debouncedSearchTerm.toLowerCase());
 
+    const matchesCategory = selectedCategory
+      ? post.categories?.some((cat) => cat.id === selectedCategory)
+      : true;
+
+    const matchesTag = selectedTag
+      ? post.tags?.some((tag) => tag.id === selectedTag)
+      : true;
+
+    return matchesSearch && matchesCategory && matchesTag;
+  });
+
+  const featuredPost =
+    filteredPosts.find((post) => post.featured) || filteredPosts[0];
+  const regularPosts = filteredPosts.filter((post) => !post.featured);
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-orange-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Animated Background Elements */}
@@ -104,19 +162,122 @@ const SolarlinkBlogs = () => {
             </p>
 
             {/* Search and Filter Bar */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 max-w-2xl mx-auto">
-              <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 w-5 h-5" />
+            <div className="flex flex-col items-center justify-center gap-6 mt-12 mb-12 max-w-4xl mx-auto">
+              {/* Search Bar */}
+              <div className="relative w-full max-w-2xl">
+                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                  <Search className="w-5 h-5" />
+                </div>
                 <input
                   type="text"
-                  placeholder="Search for articles..."
-                  className="w-full pl-10 pr-4 py-3 rounded-full border-2 border-orange-200 dark:border-slate-600 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none transition-colors bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400"
+                  placeholder="Search for articles, topics, or keywords..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-lg shadow-lg hover:shadow-xl"
                 />
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+                  <div className="px-3 py-1 bg-gradient-to-r from-orange-100 to-blue-100 dark:from-slate-700 dark:to-slate-600 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300">
+                    Press Enter
+                  </div>
+                </div>
               </div>
-              <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-blue-500 text-white rounded-full font-medium hover:from-orange-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl">
-                <Filter className="w-4 h-4" />
-                Filter
-              </button>
+
+              {/* Filter Section */}
+              <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+                {/* Category Filter */}
+                <div className="relative flex-1">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                    <Folder className="w-4 h-4" />
+                  </div>
+                  <select
+                    value={selectedCategory || ""}
+                    onChange={(e) =>
+                      setSelectedCategory(e.target.value || null)
+                    }
+                    className="w-full pl-10 pr-8 py-3 rounded-xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 shadow-md hover:shadow-lg appearance-none cursor-pointer"
+                  >
+                    <option value="">All Categories</option>
+                    {allCategories.map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {cat.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  </div>
+                </div>
+
+                {/* Tag Filter */}
+                <div className="relative flex-1">
+                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                    <Tag className="w-4 h-4" />
+                  </div>
+                  <select
+                    value={selectedTag || ""}
+                    onChange={(e) => setSelectedTag(e.target.value || null)}
+                    className="w-full pl-10 pr-8 py-3 rounded-xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 shadow-md hover:shadow-lg appearance-none cursor-pointer"
+                  >
+                    <option value="">All Tags</option>
+                    {allTags.map((tag) => (
+                      <option key={tag.id} value={tag.id}>
+                        {tag.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                    <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
+                  </div>
+                </div>
+
+                {/* Clear Filters Button */}
+                {(selectedCategory || selectedTag || searchTerm) && (
+                  <button
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setSelectedTag(null);
+                      setSearchTerm("");
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-slate-700 dark:to-slate-600 text-gray-700 dark:text-gray-200 rounded-xl font-medium hover:from-gray-200 hover:to-gray-300 dark:hover:from-slate-600 dark:hover:to-slate-500 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2 group"
+                  >
+                    <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
+                    Clear
+                  </button>
+                )}
+              </div>
+
+              {/* Active Filters Display */}
+              {(selectedCategory || selectedTag) && (
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {selectedCategory && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30 text-orange-700 dark:text-orange-300 rounded-full text-sm font-medium border border-orange-200 dark:border-orange-600/50">
+                      <Folder className="w-3 h-3" />
+                      {
+                        allCategories.find((cat) => cat.id === selectedCategory)
+                          ?.name
+                      }
+                      <button
+                        onClick={() => setSelectedCategory(null)}
+                        className="ml-1 hover:bg-orange-200 dark:hover:bg-orange-700 rounded-full p-0.5 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+                  {selectedTag && (
+                    <span className="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium border border-blue-200 dark:border-blue-600/50">
+                      <Tag className="w-3 h-3" />
+                      {allTags.find((tag) => tag.id === selectedTag)?.name}
+                      <button
+                        onClick={() => setSelectedTag(null)}
+                        className="ml-1 hover:bg-blue-200 dark:hover:bg-blue-700 rounded-full p-0.5 transition-colors"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -265,7 +426,7 @@ const SolarlinkBlogs = () => {
                 <div className="relative overflow-hidden">
                   <img
                     src={post.coverImage || "/default-cover.jpg"}
-                    alt={post.altText || post.title}
+                    alt={post.altText || post.title || "Post image"}
                     className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -360,11 +521,28 @@ const SolarlinkBlogs = () => {
           </div>
         </div>
 
-        {/* Load More Button */}
+        {filteredPosts.length === 0 && (
+          <div className="text-center py-20 text-gray-500 dark:text-gray-400 text-lg">
+            😕 No stories match your search.
+          </div>
+        )}
+
         <div className="text-center mt-12">
-          <button className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-blue-500 hover:from-orange-600 hover:to-blue-600 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl group">
+          <button
+            onClick={handleLoadMore}
+            disabled={loading || page >= totalPages}
+            className={`inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-orange-500 to-blue-500 text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl group ${
+              page >= totalPages
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:from-orange-600 hover:to-blue-600"
+            }`}
+          >
             <Sparkles className="w-5 h-5 group-hover:animate-spin" />
-            Load More Amazing Stories
+            {loading
+              ? "Loading..."
+              : page >= totalPages
+              ? "No More Stories"
+              : "Load More Amazing Stories"}
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
