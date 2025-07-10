@@ -6,13 +6,16 @@ import { getAllCategories } from "@/app/actions/getCategories";
 import { useAutoSave } from "@/hook/useAutoSave";
 import { formatDistanceToNow } from "date-fns";
 import { useTransition } from "react";
-import { createCategory } from "@/app/actions/categoryActions"
+import { createCategory } from "@/app/actions/categoryActions";
+import { useRouter } from "next/navigation";
+import PostPreviewModal from "./PostPreviewModal";
 
 import {
   FiBold,
   FiItalic,
   FiUnderline,
   FiType,
+  FiEdit,
   FiCode,
   FiList,
   FiMinus,
@@ -252,6 +255,7 @@ function TiptapEditor({
 
 export default function EnhancedCreatePostPage() {
   // Content state
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [content, setContent] = useState("");
@@ -340,6 +344,14 @@ export default function EnhancedCreatePostPage() {
 
   const handleAddCategory = (e) => {
     e.preventDefault();
+
+    const alreadyExists = categories.some(
+      (cat) => cat.name.toLowerCase() === newCategory.trim().toLowerCase()
+    );
+    if (alreadyExists) {
+      setValidationErrors({ name: "This category already exists." });
+      return;
+    }
     if (!newCategory.trim()) return;
 
     startTransition(async () => {
@@ -350,7 +362,8 @@ export default function EnhancedCreatePostPage() {
         setSelectedCategories((prev) => [...prev, result.category.id]);
         setNewCategory("");
       } else {
-        console.error(result.error);
+        console.log(result);
+        return;
       }
     });
   };
@@ -505,12 +518,13 @@ export default function EnhancedCreatePostPage() {
     }
 
     try {
-      const result = await createPost(formData);
-      console.log(result, "hhhhhhhhhhhhhhhhhhhhoppppppppppp");
+      await createPost(formData);
 
-      alert(
-        `Post ${status === "published" ? "published" : "saved"} successfully!`
-      );
+      router.refresh();
+
+      // alert(
+      //   `Post ${status === "published" ? "published" : "saved"} successfully!`
+      // );
 
       setTitle("");
       setSlug("");
@@ -561,7 +575,11 @@ export default function EnhancedCreatePostPage() {
                 onClick={() => setShowPreview(!showPreview)}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
-                <FiEye className="mr-2" />
+                {showPreview ? (
+                  <FiEdit className="mr-2" />
+                ) : (
+                  <FiEye className="mr-2" />
+                )}
                 {showPreview ? "Edit" : "Preview"}
               </button>
               <button
@@ -654,11 +672,18 @@ export default function EnhancedCreatePostPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Content
                   </label>
-                  <TiptapEditor
-                    content={content}
-                    onChange={(html) => setContent(html)}
-                    placeholder="Write your post content here..."
-                  />
+                  {showPreview ? (
+                    <div className="prose dark:prose-invert max-w-none p-4 border rounded-md bg-white dark:bg-gray-800">
+                      <div dangerouslySetInnerHTML={{ __html: content }} />
+                    </div>
+                  ) : (
+                    <TiptapEditor
+                      content={content}
+                      onChange={(html) => setContent(html)}
+                      placeholder="Write your post content here..."
+                    />
+                  )}
+
                   {validationErrors.content && (
                     <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                       {validationErrors.content}
@@ -932,6 +957,12 @@ export default function EnhancedCreatePostPage() {
                   {validationErrors.categories}
                 </p>
               )}
+
+              {validationErrors.name && (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                  {validationErrors.name}
+                </p>
+              )}
             </div>
 
             {/* Tags */}
@@ -996,6 +1027,25 @@ export default function EnhancedCreatePostPage() {
           </div>
         </div>
       </div>
+      {showPreview && (
+        <PostPreviewModal
+          onClose={() => setShowPreview(false)}
+          post={{
+            title,
+            excerpt,
+            content,
+            coverImageUrl,
+            altText,
+            categories: categories.filter((cat) =>
+              selectedCategories.includes(cat.id)
+            ),
+            tags: tags.map((tag, i) => ({
+              id: i.toString(),
+              name: tag,
+            })),
+          }}
+        />
+      )}
     </div>
   );
 }
