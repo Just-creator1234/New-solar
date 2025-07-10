@@ -1,11 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Eye, Edit3, Trash2, Plus, Search, Calendar, User } from "lucide-react";
+import {
+  Eye,
+  Edit3,
+  Trash2,
+  Plus,
+  Search,
+  Calendar,
+  User,
+  Send,
+} from "lucide-react";
 import { getPosts } from "@/app/actions/getPosts";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import BlogItem from "./BlogItem";
+import { publishPost } from "@/app/actions/publishPost";
 
 const BlogPostsManager = () => {
   const [filter, setFilter] = useState("ALL");
@@ -22,6 +32,16 @@ const BlogPostsManager = () => {
     };
     fetchPosts();
   }, [filter]);
+
+  const handlePublishSinglePost = async (id) => {
+    try {
+      const result = await publishPost(id);
+      alert(`Published post: ${result.title}`);
+    } catch (err) {
+      console.error(err);
+      alert("Error publishing post.");
+    }
+  };
 
   const handlePublishNow = async () => {
     try {
@@ -73,8 +93,6 @@ const BlogPostsManager = () => {
       );
     return matchesFilter && matchesSearch;
   });
-
-  console.log(posts, "ggggggggggggggg");
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -299,6 +317,16 @@ const BlogPostsManager = () => {
                       <Edit3 size={16} />
                       <span className="hidden sm:inline">Edit</span>
                     </Link>
+                    {post.status === "SCHEDULED" && (
+                      <button
+                        onClick={() => handlePublishSinglePost(post.id)}
+                        className="flex items-center gap-2 px-3 py-2 text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 rounded-lg transition-colors"
+                        title="Publish now"
+                      >
+                        <Send size={16} />
+                        <span className="hidden sm:inline">Publish</span>
+                      </button>
+                    )}
                     <BlogItem key={post.id} post={post} />
                   </div>
                 </div>
