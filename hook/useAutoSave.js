@@ -5,24 +5,21 @@ export function useAutoSave(data, saveCallback, setLastSaved) {
   const prevDataRef = useRef(JSON.stringify(data));
 
   useEffect(() => {
-    const currentData = JSON.stringify(data);
+    if (data.status === "PUBLISHED") return; // ❌ skip autosave if published
 
-    // If data hasn't changed, skip
+    const currentData = JSON.stringify(data);
     if (currentData === prevDataRef.current) return;
 
-    // Debounce save
     clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(async () => {
       try {
-        await saveCallback(); // Custom save function (calls server)
+        await saveCallback();
         prevDataRef.current = currentData;
-        if (setLastSaved) {
-          setLastSaved(new Date());
-        }
+        if (setLastSaved) setLastSaved(new Date());
       } catch (error) {
         console.error("Auto-save failed:", error);
       }
-    }, 2000); // 2 seconds debounce
+    }, 2000);
 
     return () => clearTimeout(timeoutRef.current);
   }, [data, saveCallback, setLastSaved]);

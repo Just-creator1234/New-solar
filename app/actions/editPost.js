@@ -51,11 +51,6 @@ export async function updatePost(slug, data) {
         slug: { in: data.categories || [] },
       },
     });
-    const tagRecords = await prisma.tag.findMany({
-      where: {
-        name: { in: data.tags || [] }, // assuming data.tags = ["tech", "design"]
-      },
-    });
 
     const updatedPost = await prisma.post.update({
       where: { id: existing.id },
@@ -74,10 +69,20 @@ export async function updatePost(slug, data) {
           set: categoryRecords.map((cat) => ({ id: cat.id })),
         },
 
+        // tags: {
+        //   set: tagRecords.map((tag) => ({ id: tag.id })),
+        // },
+
         tags: {
-          set: tagRecords.map((tag) => ({ id: tag.id })),
+          set: [], // Clear all first to avoid duplicates
+
+          connectOrCreate: (data.tags || []).filter(Boolean).map((tagName) => ({
+            where: { name: tagName },
+            create: { name: tagName },
+          })),
         },
       },
+
       include: {
         tags: true,
         categories: true,

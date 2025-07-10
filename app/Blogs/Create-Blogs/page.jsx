@@ -305,6 +305,7 @@ export default function EnhancedCreatePostPage() {
     {
       title,
       slug,
+      status,
       content,
       excerpt,
       metaTitle,
@@ -442,8 +443,6 @@ export default function EnhancedCreatePostPage() {
       errors.categories = "At least one category is required";
     if (status === "scheduled" && !publishDate)
       errors.publishDate = "Publish date is required for scheduled posts";
-    if (visibility === "password" && !password)
-      errors.password = "Password is required for password-protected posts";
 
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -486,7 +485,8 @@ export default function EnhancedCreatePostPage() {
     }
 
     try {
-      await createPost(formData);
+      const result = await createPost(formData);
+      console.log(result,"hhhhhhhhhhhhhhhhhhhhoppppppppppp");
 
       alert(
         `Post ${status === "published" ? "published" : "saved"} successfully!`
@@ -549,6 +549,7 @@ export default function EnhancedCreatePostPage() {
                 name="action"
                 value="save"
                 onClick={handleSaveDraft}
+                disabled={status === "PUBLISHED"}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <FiSave className="mr-2" />

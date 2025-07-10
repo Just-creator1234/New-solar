@@ -1,39 +1,53 @@
-// app/actions/autoSavePost.js
 "use server";
 
 import prisma from "@/lib/prisma";
 
 export async function autoSavePost(formData) {
-  if (!title && !content && !excerpt) {
-    return { success: false, skipped: true };
+  const title = formData.get("title") || "";
+  const content = formData.get("content") || "";
+  const slugInput = formData.get("slug") || "";
+
+  // Skip empty drafts
+  if (!title.trim() && !content.trim()) {
+    return { success: false, message: "Empty draft skipped" };
   }
 
+  // Generate final slug
+  const finalSlug =
+    slugInput ||
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .trim();
+
   try {
-    const slug = formData.get("slug");
-    const title = formData.get("title") || "";
-    const content = formData.get("content") || "";
+    // Check if already published
+    const existingPost = await prisma.post.findUnique({
+      where: { slug: finalSlug },
+      select: { status: true },
+    });
+
+    if (existingPost?.status === "PUBLISHED") {
+      return {
+        success: false,
+        message: "Post already published. Autosave skipped.",
+      };
+    }
+
     const excerpt = formData.get("excerpt") || "";
     const metaTitle = formData.get("metaTitle") || "";
     const metaDescription = formData.get("metaDescription") || "";
     const focusKeyword = formData.get("focusKeyword") || "";
 
-    // Basic auto-slug if missing
-    const finalSlug =
-      slug ||
-      title
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-")
-        .trim();
-
     const wordCount = content
       .replace(/<[^>]*>/g, "")
       .split(/\s+/)
       .filter(Boolean).length;
+
     const readingTime = Math.ceil(wordCount / 200);
 
-    // Upsert draft (create if not exists, update if it does)
     const post = await prisma.post.upsert({
       where: { slug: finalSlug },
       update: {
@@ -58,7 +72,7 @@ export async function autoSavePost(formData) {
         status: "DRAFT",
         wordCount,
         readingTime,
-        authorId: "sunlink-author", // Replace with actual author logic
+        authorId: "sunlink-author", // Use dynamic authorId if needed
       },
     });
 

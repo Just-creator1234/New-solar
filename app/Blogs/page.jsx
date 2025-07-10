@@ -60,26 +60,22 @@ const BlogPostsManager = () => {
 
   const filteredPosts = posts.filter((post) => {
     const matchesFilter = filter === "ALL" || post.status === filter;
+
     const matchesSearch =
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.author?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       post.tags?.some((tagObj) =>
-        (typeof tagObj === "string" ? tagObj : tagObj.tag?.name)
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        tagObj.name?.toLowerCase().includes(searchTerm.toLowerCase())
       ) ||
       post.categories?.some((categoryObj) =>
-        (typeof categoryObj === "string"
-          ? categoryObj
-          : categoryObj.category?.name
-        )
-          ?.toLowerCase()
-          .includes(searchTerm.toLowerCase())
+        categoryObj.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     return matchesFilter && matchesSearch;
   });
 
+  console.log(posts, "ggggggggggggggg");
+  
   const getStatusColor = (status) => {
     switch (status) {
       case "PUBLISHED":
@@ -263,18 +259,18 @@ const BlogPostsManager = () => {
 
                     {/* Tags */}
                     {post.tags && post.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Tags:
-                        </span>
-                        {post.tags.map((tagObj, i) => (
+                      <div className="flex flex-wrap gap-2 items-center">
+                        {post.tags.length > 0 && (
+                          <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                            Tags:
+                          </span>
+                        )}
+                        {post.tags.map((tag, i) => (
                           <span
                             key={i}
                             className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md"
                           >
-                            {typeof tagObj === "string"
-                              ? tagObj
-                              : tagObj.tag?.name}
+                            {tag.name}
                           </span>
                         ))}
                       </div>

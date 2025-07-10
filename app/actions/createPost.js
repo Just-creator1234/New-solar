@@ -3,7 +3,6 @@
 import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
 export async function createPost(formData) {
   try {
     // 🔐 Secret check
@@ -12,10 +11,9 @@ export async function createPost(formData) {
       return { error: "Unauthorized upload attempt" };
     }
 
-    const action = formData.get("action"); // from the button's name="action" value
+    const action = formData.get("action");
     const status = action === "publish" ? "PUBLISHED" : "DRAFT";
 
-    // Extract data
     const data = {
       title: formData.get("title"),
       slug: formData.get("slug"),
@@ -23,6 +21,7 @@ export async function createPost(formData) {
       excerpt: formData.get("excerpt"),
       publishDate: formData.publishDate ? new Date(formData.publishDate) : null,
       altText: formData.get("altText"),
+      status,
       categories: JSON.parse(formData.get("categories") || "[]"),
       tags: JSON.parse(formData.get("tags") || "[]"),
       metaTitle: formData.get("metaTitle"),
@@ -31,21 +30,15 @@ export async function createPost(formData) {
       authorId: formData.get("authorId"),
     };
 
-    // Check if slug already exists
     const existingPost = await prisma.post.findUnique({
       where: { slug: data.slug },
     });
-
-    if (existingPost) {
-      return { error: "Slug already exists" };
-    }
 
     // Word count & reading time
     const wordCount = data.content
       .replace(/<[^>]*>/g, "")
       .split(/\s+/)
-      .filter((word) => word.length > 0).length;
-
+      .filter(Boolean).length;
     const readingTime = Math.ceil(wordCount / 200);
 
     // Upload cover image
@@ -59,7 +52,6 @@ export async function createPost(formData) {
           body: formData,
         }
       );
-
       if (uploadResponse.ok) {
         const { url } = await uploadResponse.json();
         coverImageUrl = url;
@@ -68,65 +60,71 @@ export async function createPost(formData) {
 
     const categoryRecords = await prisma.category.findMany({
       where: {
-        slug: { in: data.categories }, // ["business", "ai-ml"]
+        slug: { in: data.categories },
       },
     });
 
-    const post = await prisma.post.create({
-      data: {
-        title: data.title,
-        slug: data.slug,
-        content: data.content,
-        excerpt: data.excerpt,
-        status: status,
-        publishDate: data.publishDate,
-        coverImage: coverImageUrl,
-        altText: data.altText,
-        wordCount: wordCount,
-        readingTime: readingTime,
-        metaTitle: data.metaTitle,
-        metaDescription: data.metaDescription,
-        focusKeyword: data.focusKeyword,
+    const tagConnectOrCreate = data.tags
+      .filter((tag) => tag && tag.trim())
+      .map((tagName) => ({
+        where: { name: tagName },
+        create: { name: tagName },
+      }));
 
-        author: {
-          connect: {
-            id: data.authorId,
+    // ✅ Case 1: Slug exists
+    if (existingPost) {
+      if (existingPost.status === "PUBLISHED") {
+        return { error: "Slug already in use by a published post." };
+      }
+
+      // 🟢 Update the existing draft
+      const updatedPost = await prisma.post.update({
+        where: { slug: data.slug },
+        data: {
+          title: data.title,
+          content: data.content,
+          excerpt: data.excerpt,
+          status,
+          publishDate: data.publishDate || new Date(),
+          publishedAt: status === "PUBLISHED" ? new Date() : null,
+          coverImage: coverImageUrl,
+          altText: data.altText,
+          wordCount,
+          readingTime,
+          metaTitle: data.metaTitle,
+          metaDescription: data.metaDescription,
+          focusKeyword: data.focusKeyword,
+          author: {
+            connect: { id: data.authorId },
+          },
+          categories: {
+            set: categoryRecords.map((cat) => ({ id: cat.id })),
+          },
+          tags: {
+            connectOrCreate: tagConnectOrCreate,
           },
         },
-
-        // ✅ Correct usage for direct many-to-many relation
-        categories: {
-          connect: categoryRecords.map((cat) => ({ id: cat.id })),
+        include: {
+          categories: true,
+          tags: true,
+          author: true,
         },
-        tags: {
-          create: data.tags.map((tag) => ({
-            tag: { connect: { name: tag } },
-          })),
-        },
-      },
-      include: {
-        categories: true,
-        tags: true,
-        author: true,
-      },
-    });
+      });
 
-    console.log(post, "ggggggggggggggggggggggggg");
-    revalidatePath("/blog");
-
-    return {
-      success: true,
-      post,
-      message: `Post ${
-        data.status === "PUBLISHED" ? "published" : "saved"
-      } successfully!`,
-    };
+      revalidatePath("/Blogs");
+      return {
+        success: true,
+        post: updatedPost,
+        message: `Post ${
+          status === "PUBLISHED" ? "published" : "saved"
+        } successfully!`,
+      };
+    }
   } catch (error) {
     console.error("Error creating post:", error);
     return { error: "Failed to create post" };
   }
 }
-
 
 export async function saveDraft(formData) {
   try {
@@ -182,16 +180,6 @@ export async function saveDraft(formData) {
       },
     });
 
-    const tagRecords = await Promise.all(
-      data.tags.map(async (tagName) => {
-        return await prisma.tag.upsert({
-          where: { name: tagName },
-          update: {},
-          create: { name: tagName },
-        });
-      })
-    );
-
     const draft = await prisma.post.upsert({
       where: { slug: data.slug },
       update: {
@@ -210,7 +198,12 @@ export async function saveDraft(formData) {
           set: categoryRecords.map((cat) => ({ id: cat.id })),
         },
         tags: {
-          set: tagRecords.map((tag) => ({ id: tag.id })),
+          connectOrCreate: data.tags
+            .filter((tag) => tag && tag.trim())
+            .map((tagName) => ({
+              where: { name: tagName },
+              create: { name: tagName },
+            })),
         },
       },
       create: {
@@ -230,7 +223,12 @@ export async function saveDraft(formData) {
           connect: categoryRecords.map((cat) => ({ id: cat.id })),
         },
         tags: {
-          connect: tagRecords.map((tag) => ({ id: tag.id })),
+          connectOrCreate: data.tags
+            .filter((tag) => tag && tag.trim())
+            .map((tagName) => ({
+              where: { name: tagName },
+              create: { name: tagName },
+            })),
         },
       },
     });
