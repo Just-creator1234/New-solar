@@ -430,6 +430,7 @@ export default function EnhancedCreatePostPage() {
     try {
       const result = await saveDraft(formData);
       if (result.success) {
+        router.push("/Blogs");
         alert("Draft saved successfully!");
       } else {
         alert("Failed to save draft.");
@@ -523,7 +524,7 @@ export default function EnhancedCreatePostPage() {
 
     try {
       await createPost(formData);
-      router.refresh();
+      router.push("/Blogs");
 
       // Clear form
       setTitle("");
