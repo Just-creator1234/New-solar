@@ -1,25 +1,23 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2 } from "lucide-react";
 import { deletePostById } from "@/app/actions/deletePost"; // server action
 
-export default function BlogItem({ post }) {
+export default function BlogItem({ post, onPostUpdated }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
-  const handleDelete = () => {
-    startTransition(async () => {
-      const result = await deletePostById(post.id);
-      if (result.success) {
-        setIsModalOpen(false);
-        router.refresh();
-      } else {
-        alert("Failed to delete post.");
-      }
-    });
+  const handleDelete = async () => {
+    const result = await deletePostById(post.id);
+    if (result.success) {
+      setIsModalOpen(false);
+      startTransition(() => {
+        onPostUpdated(); // triggers refresh without blocking UI
+      });
+    } else {
+      alert("Failed to delete post.");
+    }
   };
 
   return (
