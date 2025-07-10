@@ -21,6 +21,7 @@ const NavbarNew = () => {
     { name: "About", href: "/About" },
     { name: "Services", href: "#services" },
     { name: "Contact", href: "/contact" },
+    { name: "Blogs", href: "/Blogs/Solarlink-Blogs" },
   ];
 
   const isActive = (href) => {
@@ -41,7 +42,7 @@ const NavbarNew = () => {
   return (
     <nav
       ref={navRef}
-      className="fixed top-0 left-0 w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg border-b border-orange-100 dark:border-gray-800 transition-all duration-500"
+      className="fixed top-0 left-0 w-full z-[999999999999999999999999] bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-lg border-b border-orange-100 dark:border-gray-800 transition-all duration-500"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16 lg:h-20">
         {/* Logo */}

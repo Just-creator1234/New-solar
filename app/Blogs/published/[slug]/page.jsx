@@ -1,3 +1,5 @@
+
+
 import { notFound } from "next/navigation";
 import {
   Calendar,
@@ -8,6 +10,13 @@ import {
   ArrowLeft,
   Eye,
   Heart,
+  Bookmark,
+  Twitter,
+  Facebook,
+  Linkedin,
+  Link2,
+  Tag,
+  MessageCircle,
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -50,7 +59,6 @@ export async function generateMetadata({ params }) {
     },
   });
 
-  console.log(post, "metaaaaaaa dataaaaaaa");
   if (!post) return notFound();
 
   return {
@@ -104,180 +112,312 @@ export default async function PublishedPostPage({ params }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      {/* Navigation */}
-      <nav className="sticky top-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 z-50">
-        <div className="max-w-6xl mx-auto px-6 py-4">
+    <div className="min-h-screen bg-gradient-to-br mt-10 bg-comfort-cream dark:from-gray-900 dark:via-gray-800 dark:to-slate-900">
+      {/* Enhanced Navigation */}
+      <nav className="sticky top-0 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-700/50 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="group inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all duration-200"
             >
-              <ArrowLeft size={18} />
-              Back to Blog
+              <ArrowLeft
+                size={18}
+                className="group-hover:-translate-x-1 transition-transform"
+              />
+              <span className="font-medium">Back to Blog</span>
             </Link>
-            <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors">
-              <Share2 size={16} />
-              Share
-            </button>
+            <div className="flex items-center gap-3">
+              <button className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">
+                <Bookmark size={16} />
+              </button>
+              <button className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white transition-all duration-200 shadow-md hover:shadow-lg">
+                <Share2 size={16} />
+                Share
+              </button>
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Standalone Hero Image */}
+      {/* Hero Section with Enhanced Image */}
       {post.coverImage && (
-        <section className="relative mx-auto flex justify-center items-center">
-          <img
-            src={post.coverImage}
-            alt={post.altText || post.title}
-            className="w-[80%]  h-auto max-h-[600px] object-cover"
-          />
+        <section className="relative">
+          <div className="relative mx-auto max-w-6xl px-6 py-8">
+            <div className="relative overflow-hidden rounded-2xl shadow-2xl">
+              <img
+                src={post.coverImage}
+                alt={post.altText || post.title}
+                className="w-full h-[400px] md:h-[500px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+              {/* Floating category badges on image */}
+              {post.categories.length > 0 && (
+                <div className="absolute top-6 left-6 flex flex-wrap gap-2">
+                  {post.categories.map((category) => (
+                    <span
+                      key={category.id}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/90 text-gray-900 backdrop-blur-sm border border-white/20 shadow-lg"
+                    >
+                      {category.name}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </section>
       )}
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
-        <header className="mb-12">
-          {post.categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
-              {post.categories.map((category) => (
-                <span
-                  key={category.id}
-                  className="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800"
-                >
-                  {category.name}
-                </span>
-              ))}
-            </div>
-          )}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
-            {post.title}
-          </h1>
-          {post.excerpt && (
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8">
-              {post.excerpt}
-            </p>
-          )}
-        </header>
-
-        {/* Meta Info */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-12 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-          <div className="flex items-center gap-6 mb-4 md:mb-0">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center">
-                {post.author?.image ? (
-                  <img
-                    src={post.author.image}
-                    alt={post.author.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User size={20} className="text-white" />
-                )}
-              </div>
-              <div>
-                <p className="font-semibold text-gray-900 dark:text-white">
-                  {post.author?.name || "Unknown Author"}
+      {/* Main Content Container */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* Main Content */}
+          <main className="lg:col-span-8">
+            {/* Article Header */}
+            <header className="mb-10">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent leading-tight mb-6">
+                {post.title}
+              </h1>
+              {post.excerpt && (
+                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed mb-8 font-light">
+                  {post.excerpt}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Author
-                </p>
+              )}
+            </header>
+
+            {/* Enhanced Meta Info */}
+            <div className="mb-10 p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {/* Author Info */}
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center ring-2 ring-white dark:ring-gray-800 shadow-lg">
+                      {post.author?.image ? (
+                        <img
+                          src={post.author.image}
+                          alt={post.author.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <User size={24} className="text-white" />
+                      )}
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white text-lg">
+                      {post.author?.name || "Unknown Author"}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      Author & Content Creator
+                    </p>
+                  </div>
+                </div>
+
+                {/* Article Meta */}
+                <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                    <Calendar size={16} />
+                    <span>
+                      {format(new Date(post.createdAt), "MMM d, yyyy")}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                    <Clock size={16} />
+                    <span>{readingTime} min read</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                    <Eye size={16} />
+                    <span>1.2k views</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="flex items-center gap-6 text-sm text-gray-600 dark:text-gray-400">
-            <div className="flex items-center gap-2">
-              <Calendar size={16} />
-              <span>{format(new Date(post.createdAt), "MMMM d, yyyy")}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock size={16} />
-              <span>{readingTime} min read</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BookOpen size={16} />
-              <span>Article</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Article Body */}
-        <article className="mb-12">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="p-8 md:p-12">
-              <div
-                className="prose prose-lg dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.content }}
-              />
-            </div>
-          </div>
-        </article>
-
-        {/* Tags */}
-        {post.tags.length > 0 && (
-          <div className="mb-12 p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Tags
-            </h3>
-            <div className="flex flex-wrap gap-3">
-              {post.tags.map((tag) => (
-                <Link
-                  key={tag.id}
-                  href={`/blog/tags/${tag.slug ?? tag.name.toLowerCase()}`}
-                  className="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 transition-colors"
-                >
-                  #{tag.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Author Bio */}
-        {post.author?.bio && (
-          <div className="mb-12 p-8 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 rounded-2xl border border-blue-200 dark:border-blue-800">
-            <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center flex-shrink-0">
-                {post.author.image ? (
-                  <img
-                    src={post.author.image}
-                    alt={post.author.name}
-                    className="w-full h-full object-cover"
+            {/* Article Body */}
+            <article className="mb-12">
+              <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg overflow-hidden">
+                <div className="p-8 md:p-12">
+                  <div
+                    className="prose prose-lg dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white"
+                    dangerouslySetInnerHTML={{ __html: post.content }}
                   />
-                ) : (
-                  <User size={24} className="text-white" />
-                )}
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  About {post.author.name}
+            </article>
+
+            {/* Tags Section */}
+            {post.tags.length > 0 && (
+              <div className="mb-10 p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                  <Tag size={18} className="text-blue-500" />
+                  Related Tags
                 </h3>
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {post.author.bio}
-                </p>
+                <div className="flex flex-wrap gap-3">
+                  {post.tags.map((tag) => (
+                    <Link
+                      key={tag.id}
+                      href={`/blog/tags/${tag.slug ?? tag.name.toLowerCase()}`}
+                      className="group inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 dark:hover:from-blue-900/30 dark:hover:to-purple-900/30 text-gray-700 dark:text-gray-300 transition-all duration-200 border border-blue-200/50 dark:border-blue-700/50 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm hover:shadow-md"
+                    >
+                      <span className="mr-1 text-blue-500 group-hover:text-blue-600">
+                        #
+                      </span>
+                      {tag.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Enhanced Action Buttons */}
+            <div className="mb-10 p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+              <div className="flex items-center justify-center gap-4">
+                <button className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-red-50 to-pink-50 hover:from-red-100 hover:to-pink-100 dark:from-red-900/20 dark:to-pink-900/20 dark:hover:from-red-900/30 dark:hover:to-pink-900/30 text-red-700 dark:text-red-400 transition-all duration-200 border border-red-200/50 dark:border-red-700/50 hover:border-red-300 dark:hover:border-red-600 shadow-sm hover:shadow-md">
+                  <Heart
+                    size={18}
+                    className="group-hover:scale-110 transition-transform"
+                  />
+                  <span className="font-medium">Like</span>
+                  <span className="text-xs bg-red-100 dark:bg-red-900/40 px-2 py-1 rounded-full">
+                    42
+                  </span>
+                </button>
+                <button className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 dark:from-blue-900/20 dark:to-cyan-900/20 dark:hover:from-blue-900/30 dark:hover:to-cyan-900/30 text-blue-700 dark:text-blue-400 transition-all duration-200 border border-blue-200/50 dark:border-blue-700/50 hover:border-blue-300 dark:hover:border-blue-600 shadow-sm hover:shadow-md">
+                  <Share2
+                    size={18}
+                    className="group-hover:scale-110 transition-transform"
+                  />
+                  <span className="font-medium">Share</span>
+                </button>
+                <button className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 dark:hover:from-green-900/30 dark:hover:to-emerald-900/30 text-green-700 dark:text-green-400 transition-all duration-200 border border-green-200/50 dark:border-green-700/50 hover:border-green-300 dark:hover:border-green-600 shadow-sm hover:shadow-md">
+                  <Bookmark
+                    size={18}
+                    className="group-hover:scale-110 transition-transform"
+                  />
+                  <span className="font-medium">Save</span>
+                </button>
               </div>
             </div>
-          </div>
-        )}
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-center gap-4 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700">
-          <button className="flex items-center gap-2 px-6 py-3 rounded-lg bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 text-red-700 dark:text-red-400 transition-colors">
-            <Heart size={18} />
-            <span className="font-medium">Like</span>
-          </button>
-          <button className="flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-400 transition-colors">
-            <Share2 size={18} />
-            <span className="font-medium">Share</span>
-          </button>
-          <button className="flex items-center gap-2 px-6 py-3 rounded-lg bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 text-green-700 dark:text-green-400 transition-colors">
-            <BookOpen size={18} />
-            <span className="font-medium">Save</span>
-          </button>
+            {/* Author Bio */}
+            {post.author?.bio && (
+              <div className="mb-10 p-8 bg-gradient-to-r from-blue-50/80 to-purple-50/80 dark:from-blue-900/20 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl border border-blue-200/50 dark:border-blue-700/50 shadow-lg">
+                <div className="flex items-start gap-6">
+                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 overflow-hidden flex items-center justify-center flex-shrink-0 shadow-lg">
+                    {post.author.image ? (
+                      <img
+                        src={post.author.image}
+                        alt={post.author.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <User size={32} className="text-white" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                      About {post.author.name}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4">
+                      {post.author.bio}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                        <Twitter size={20} />
+                      </button>
+                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                        <Linkedin size={20} />
+                      </button>
+                      <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors">
+                        <Link2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* Enhanced Sidebar */}
+          <aside className="lg:col-span-4">
+            <div className="sticky top-24 space-y-6">
+              {/* Quick Share */}
+              <div className="p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Share this article
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-400 transition-colors">
+                    <Twitter size={16} />
+                    <span className="text-sm font-medium">Twitter</span>
+                  </button>
+                  <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-400 transition-colors">
+                    <Facebook size={16} />
+                    <span className="text-sm font-medium">Facebook</span>
+                  </button>
+                  <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/20 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-400 transition-colors">
+                    <Linkedin size={16} />
+                    <span className="text-sm font-medium">LinkedIn</span>
+                  </button>
+                  <button className="flex items-center gap-2 px-4 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 transition-colors">
+                    <Link2 size={16} />
+                    <span className="text-sm font-medium">Copy</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Table of Contents (placeholder) */}
+              <div className="p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Table of Contents
+                </h3>
+                <nav className="space-y-2">
+                  <a
+                    href="#section1"
+                    className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    Introduction
+                  </a>
+                  <a
+                    href="#section2"
+                    className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    Main Content
+                  </a>
+                  <a
+                    href="#section3"
+                    className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                  >
+                    Conclusion
+                  </a>
+                </nav>
+              </div>
+
+              {/* Related Articles (placeholder) */}
+              <div className="p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  Related Articles
+                </h3>
+                <div className="space-y-4">
+                  <div className="flex gap-3">
+                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0"></div>
+                    <div className="flex-1">
+                      <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
+                        Related Article Title Here
+                      </h4>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        5 min read
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
