@@ -1,28 +1,24 @@
 // app/actions/publishPost.js
 
-'use server';
+"use server";
 
-import prisma from '@/lib/prisma';
+import prisma from "@/lib/prisma";
 
 export async function publishPost(id) {
   if (!id) {
-    throw new Error('No post ID provided');
+    throw new Error("No post ID provided");
   }
 
   const post = await prisma.post.findUnique({ where: { id } });
 
   if (!post) {
-    throw new Error('Post not found');
-  }
-
-  if (post.status !== 'SCHEDULED') {
-    throw new Error('Post is not scheduled');
+    throw new Error("Post not found");
   }
 
   const updatedPost = await prisma.post.update({
     where: { id },
     data: {
-      status: 'PUBLISHED',
+      status: "PUBLISHED",
       publishedAt: new Date(),
     },
   });
