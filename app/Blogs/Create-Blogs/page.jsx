@@ -342,6 +342,29 @@ export default function EnhancedCreatePostPage() {
     await saveDraft(formData);
   }
 
+  const handleDeleteCategory = async (id) => {
+    try {
+      const res = await fetch(`/api/categories/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json(); // get message from API
+        throw new Error(errorData.message || "Failed to delete category");
+      }
+
+      // Remove from local state if successful
+      setCategories((prev) => prev.filter((cat) => cat.id !== id));
+      setValidationErrors({}); // clear previous errors
+    } catch (error) {
+      // Set the error in validationErrors
+      setValidationErrors((prev) => ({
+        ...prev,
+        deleteCategory: error.message,
+      }));
+    }
+  };
+
   const handleAddCategory = (e) => {
     e.preventDefault();
 
@@ -986,24 +1009,24 @@ export default function EnhancedCreatePostPage() {
               </div>
             </div>
 
-            {/* Categories */}
+            {/*Categories*/}
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <h3 className="font-semibold mb-3 text-gray-900 dark:text-white">
                 Categories
               </h3>
 
-              <div className="max-h-48 overflow-y-auto">
+              <div className="max-h-48 overflow-y-auto space-y-2">
                 {loading ? (
                   <div className="flex items-center justify-center p-4">
                     <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-orange-500" />
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    {categories.map((category) => (
-                      <label
-                        key={category.id}
-                        className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded"
-                      >
+                  categories.map((category) => (
+                    <div
+                      key={category.id}
+                      className="flex justify-between items-center group"
+                    >
+                      <label className="flex items-center space-x-2 text-sm cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-1 rounded flex-1">
                         <input
                           type="checkbox"
                           checked={selectedCategories.includes(category.id)}
@@ -1014,8 +1037,17 @@ export default function EnhancedCreatePostPage() {
                           {category.name}
                         </span>
                       </label>
-                    ))}
-                  </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCategory(category.id)}
+                        className="text-gray-400 hover:text-red-600 p-1 hidden group-hover:block"
+                        title="Delete category"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  ))
                 )}
               </div>
 
@@ -1038,9 +1070,16 @@ export default function EnhancedCreatePostPage() {
                 </form>
               </div>
 
+              {/* Validation Errors */}
               {validationErrors.categories && (
                 <p className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {validationErrors.categories}
+                </p>
+              )}
+
+              {validationErrors.deleteCategory && (
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                  {validationErrors.deleteCategory}
                 </p>
               )}
 
@@ -1093,7 +1132,6 @@ export default function EnhancedCreatePostPage() {
                 )}
               </div>
             </div>
-
             {/* Validation Summary */}
             {Object.keys(validationErrors).length > 0 && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">

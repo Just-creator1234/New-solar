@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     "app/page.jsx",
     "lib/publishScheduledPosts.js"
-, "app/api/dev/publish-now/route.js"  ],
+, "app/api/dev/publish-now/route.js", "app/api/categories/[id]/route.js"  ],
   "exclude": ["node_modules"]
 }

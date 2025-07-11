@@ -7,35 +7,42 @@ const PASSWORD = process.env.NEXT_PUBLIC_EDITOR_PASSWORD;
 
 export default function ClientRouteProtector({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true); // for initial loading
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("client_authenticated");
-    if (saved === "true") setIsAuthenticated(true);
+    if (saved === "true") {
+      setIsAuthenticated(true);
+    }
+    setLoading(false); // Stop loading after checking localStorage
   }, []);
 
   const handleLogin = () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      if (passwordInput === PASSWORD) {
-        localStorage.setItem("client_authenticated", "true");
-        setIsAuthenticated(true);
-      } else {
-        alert("Incorrect password.");
-      }
-      setIsLoading(false);
-    }, 500);
+    if (passwordInput === PASSWORD) {
+      localStorage.setItem("client_authenticated", "true");
+      setIsAuthenticated(true);
+    } else {
+      alert("Incorrect password.");
+    }
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") handleLogin();
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin h-6 w-6 rounded-full border-4 border-orange-500 border-t-transparent" />
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-900 dark:to-slate-800 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-900 dark:to-slate-800 p-4 ">
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full mb-4">
@@ -68,7 +75,7 @@ export default function ClientRouteProtector({ children }) {
                     placeholder="Enter your password"
                     value={passwordInput}
                     onChange={(e) => setPasswordInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress} // ✅ updated from onKeyPress
                     className="block w-full pl-10 pr-12 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
                   />
                   <button
@@ -87,10 +94,10 @@ export default function ClientRouteProtector({ children }) {
 
               <button
                 onClick={handleLogin}
-                disabled={!passwordInput.trim() || isLoading}
+                disabled={!passwordInput.trim() || loading}
                 className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 disabled:from-slate-300 disabled:to-slate-400 dark:disabled:from-slate-600 dark:disabled:to-slate-700 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl disabled:shadow-none transition-all duration-200 transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
+                {loading ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Verifying...

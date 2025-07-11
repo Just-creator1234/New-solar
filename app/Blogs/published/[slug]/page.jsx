@@ -1,5 +1,3 @@
-
-
 import { notFound } from "next/navigation";
 import {
   Calendar,
@@ -102,6 +100,27 @@ export default async function PublishedPostPage({ params }) {
         },
       },
     },
+  });
+
+  // Get related posts by shared categories (you can also include tags)
+  const relatedPosts = await prisma.post.findMany({
+    where: {
+      status: "PUBLISHED",
+      id: { not: post.id },
+      categories: {
+        some: {
+          id: { in: post.categories.map((cat) => cat.id) },
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      slug: true,
+      coverImage: true,
+      createdAt: true,
+    },
+    take: 3,
   });
 
   if (!post || post.status !== "PUBLISHED") return notFound();
@@ -395,25 +414,42 @@ export default async function PublishedPostPage({ params }) {
                 </nav>
               </div>
 
-              {/* Related Articles (placeholder) */}
-              <div className="p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  Related Articles
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-lg flex-shrink-0"></div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
-                        Related Article Title Here
-                      </h4>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        5 min read
-                      </p>
-                    </div>
+             
+              {/* Related Articles */}
+              {relatedPosts.length > 0 && (
+                <div className="p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    Related Articles
+                  </h3>
+                  <div className="space-y-4">
+                    {relatedPosts.map((related) => (
+                      <Link
+                        key={related.id}
+                        href={`/blog/published/${related.slug}`}
+                        className="flex gap-3 group"
+                      >
+                        <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
+                          {related.coverImage && (
+                            <img
+                              src={related.coverImage}
+                              alt={related.title}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-sm font-medium text-gray-900 dark:text-white group-hover:underline line-clamp-2">
+                            {related.title}
+                          </h4>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {format(new Date(related.createdAt), "MMM d, yyyy")}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </aside>
         </div>
