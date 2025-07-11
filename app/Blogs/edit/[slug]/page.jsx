@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import TagInput from "./TagInput";
+import TiptapEditor from "@/components/TiptapEditor";
 import {
   Loader2,
   Save,
@@ -31,7 +32,6 @@ export default function EditPostPage() {
       try {
         const res = await getAllCategories();
         setCategories(res);
-        console.log(res, "gggggggggg");
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       } finally {
@@ -61,6 +61,7 @@ export default function EditPostPage() {
     const fetchPost = async () => {
       setLoading(true);
       const data = await getPostBySlug(slug);
+      console.log(data, "ggggggggg");
       if (data) {
         setPost({
           title: data.title || "",
@@ -319,20 +320,23 @@ export default function EditPostPage() {
                     </div>
 
                     {/* Content */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Content
-                      </label>
-                      <textarea
-                        rows={16}
-                        value={post.content}
-                        onChange={(e) =>
-                          setPost({ ...post, content: e.target.value })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors font-mono text-sm"
-                        placeholder="Write your post content..."
-                      />
-                    </div>
+                    {!loading && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Content
+                        </label>
+
+                        <div className="min-h-[400px] border-2 border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-600 rounded-lg">
+                          <TiptapEditor
+                            content={post.content}
+                            onChange={(html) =>
+                              setPost({ ...post, content: html })
+                            }
+                            placeholder="Write your post content here..."
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

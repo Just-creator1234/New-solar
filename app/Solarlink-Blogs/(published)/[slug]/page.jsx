@@ -142,7 +142,7 @@ export default async function PublishedPostPage({ params }) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
-              href="/blog"
+              href="/Blogs"
               className="group inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all duration-200"
             >
               <ArrowLeft

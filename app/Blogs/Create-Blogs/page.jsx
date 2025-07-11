@@ -9,6 +9,7 @@ import { useTransition } from "react";
 import { createCategory } from "@/app/actions/categoryActions";
 import { useRouter } from "next/navigation";
 import PostPreviewModal from "./PostPreviewModal";
+import TiptapEditor from "@/components/TiptapEditor";
 
 import {
   FiBold,
@@ -37,222 +38,6 @@ import {
   FiCheckCircle,
   FiAlertCircle,
 } from "react-icons/fi";
-import { FaListOl, FaQuoteRight } from "react-icons/fa";
-import { BsCodeSlash } from "react-icons/bs";
-import { useEditor, EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Placeholder from "@tiptap/extension-placeholder";
-import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
-
-function TiptapEditor({
-  content,
-  onChange,
-  placeholder = "Write something amazing...",
-  className = "",
-}) {
-  const editor = useEditor({
-    extensions: [
-      StarterKit.configure({
-        heading: {
-          levels: [2],
-        },
-      }),
-      Placeholder.configure({
-        placeholder,
-      }),
-      Image.configure({
-        inline: true,
-        allowBase64: true,
-      }),
-      Link.configure({
-        openOnClick: false,
-      }),
-    ],
-    content,
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
-    },
-  });
-
-  if (!editor) {
-    return null;
-  }
-
-  const addImage = () => {
-    const url = window.prompt("Enter the URL of the image:");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
-    }
-  };
-
-  const setLink = () => {
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
-
-    if (url === null) {
-      return;
-    }
-
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  };
-
-  return (
-    <div className="rounded-lg bg-white dark:bg-gray-800 w-full h-full">
-      <div className="flex flex-wrap gap-1 p-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 rounded-t-lg">
-        <button
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("bold")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Bold"
-        >
-          <FiBold />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("italic")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Italic"
-        >
-          <FiItalic />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleUnderline().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("underline")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Underline"
-        >
-          <FiUnderline />
-        </button>
-        <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-        <button
-          onClick={() =>
-            editor.chain().focus().toggleHeading({ level: 2 }).run()
-          }
-          className={`p-2 rounded-md ${
-            editor.isActive("heading", { level: 2 })
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Heading"
-        >
-          <FiType />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("bulletList")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Bullet List"
-        >
-          <FiList />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("orderedList")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Numbered List"
-        >
-          <FaListOl />
-        </button>
-        <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-        <button
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("blockquote")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Quote"
-        >
-          <FaQuoteRight />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={`p-2 rounded-md ${
-            editor.isActive("codeBlock")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Code Block"
-        >
-          <BsCodeSlash />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          title="Horizontal Rule"
-        >
-          <FiMinus />
-        </button>
-        <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-        <button
-          onClick={setLink}
-          className={`p-2 rounded-md ${
-            editor.isActive("link")
-              ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-200"
-              : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          }`}
-          title="Link"
-        >
-          <FiLink />
-        </button>
-        <button
-          onClick={addImage}
-          className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600"
-          title="Image"
-        >
-          <FiImage />
-        </button>
-        <div className="w-px h-8 bg-gray-300 dark:bg-gray-600 mx-1"></div>
-        <button
-          onClick={() => editor.chain().focus().undo().run()}
-          disabled={!editor.can().undo()}
-          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            !editor.can().undo() ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          title="Undo"
-        >
-          <FiCornerUpLeft />
-        </button>
-        <button
-          onClick={() => editor.chain().focus().redo().run()}
-          disabled={!editor.can().redo()}
-          className={`p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${
-            !editor.can().redo() ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          title="Redo"
-        >
-          <FiCornerUpRight />
-        </button>
-      </div>
-
-      <EditorContent
-        editor={editor}
-        className={`w-full min-h-[400px] p-4 focus:outline-none prose dark:prose-invert max-w-none ${className}`}
-      />
-    </div>
-  );
-}
 
 export default function EnhancedCreatePostPage() {
   // Content state
@@ -280,6 +65,7 @@ export default function EnhancedCreatePostPage() {
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [activeTab, setActiveTab] = useState("content");
   const [showPreview, setShowPreview] = useState(false);
   const [wordCount, setWordCount] = useState(0);
@@ -321,8 +107,8 @@ export default function EnhancedCreatePostPage() {
       metaDescription,
       focusKeyword,
     },
-    handleAutoSave, // this is your async saveDraft function
-    setLastSaved // updates the "last saved" time
+    autoSave ? handleAutoSave : () => {}, // ✅ only save if autoSave is enabled
+    autoSave ? setLastSaved : undefined // ✅ update lastSaved if enabled
   );
 
   async function handleAutoSave() {
@@ -691,7 +477,6 @@ export default function EnhancedCreatePostPage() {
                 name="action"
                 value="draft"
                 onClick={handleSaveDraft}
-                disabled={status === "PUBLISHED"}
                 className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
                 <FiSave className="mr-2" />
@@ -781,18 +566,12 @@ export default function EnhancedCreatePostPage() {
                       <div dangerouslySetInnerHTML={{ __html: content }} />
                     </div>
                   ) : (
-                    <div className="min-h-[400px] border-none">
-                      {/* <TiptapEditor
+                    <div className="min-h-[400px] border-2 border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-600">
+                      <TiptapEditor
                         content={content}
                         onChange={(html) => setContent(html)}
                         placeholder="Write your post content here..."
-                      /> */}
-
-                      <TiptapEditor
-                        content={content}
-                        onChange={setContent}
-                        placeholder="Write your post content here..."
-                        className="min-h-[500px]"
+                        className="custom-optional-classes"
                       />
                     </div>
                   )}
@@ -852,7 +631,7 @@ export default function EnhancedCreatePostPage() {
                       <div className="text-center">
                         <FiImage className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
                         <span className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
-                          Upload a cover image Limit 10mb
+                          Upload a cover image
                         </span>
                       </div>
                     )}
