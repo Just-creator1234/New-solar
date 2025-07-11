@@ -10,6 +10,7 @@ import { createCategory } from "@/app/actions/categoryActions";
 import { useRouter } from "next/navigation";
 import PostPreviewModal from "./PostPreviewModal";
 import TiptapEditor from "@/components/TiptapEditor";
+import Image from "next/image";
 
 import {
   FiBold,
@@ -620,21 +621,25 @@ export default function EnhancedCreatePostPage() {
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Cover Image
                   </label>
-                  <div className="relative w-full h-64 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center hover:border-orange-400 dark:hover:border-orange-400 transition cursor-pointer bg-white dark:bg-gray-800">
+
+                  <div className="relative w-full h-64 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center hover:border-orange-400 dark:hover:border-orange-400 transition cursor-pointer bg-white dark:bg-gray-800 overflow-hidden">
                     {coverImageUrl ? (
-                      <img
+                      <Image
                         src={coverImageUrl}
                         alt="Cover"
-                        className="h-full w-full object-cover rounded-lg"
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="(max-width: 768px) 100vw, 700px"
                       />
                     ) : (
-                      <div className="text-center">
+                      <div className="text-center pointer-events-none">
                         <FiImage className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500" />
                         <span className="mt-2 block text-sm text-gray-500 dark:text-gray-400">
                           Upload a cover image
                         </span>
                       </div>
                     )}
+
                     <input
                       type="file"
                       accept="image/*"

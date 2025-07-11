@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { format } from "date-fns";
+import Image from "next/image";
 import {
   Calendar,
+  ImageOff,
   User,
   Tag,
   Clock,
@@ -147,15 +149,30 @@ export default async function DraftPostPage({ params }) {
         </header>
 
         {/* Featured Image */}
-        {post.coverImage && (
+
+        {post.coverImage ? (
           <div className="mb-12">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-800">
-              <img
+              <Image
                 src={post.coverImage}
                 alt={post.altText || post.title}
-                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105"
+                width={1200}
+                height={600}
+                className="w-full h-auto object-cover transition-transform duration-300 hover:scale-105 rounded-2xl"
+                priority={false}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            </div>
+          </div>
+        ) : (
+          <div className="mb-12">
+            <div className="flex items-center justify-center h-64 rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-600">
+              <div className="text-center">
+                <ImageOff className="w-10 h-10 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No cover image
+                </p>
+              </div>
             </div>
           </div>
         )}

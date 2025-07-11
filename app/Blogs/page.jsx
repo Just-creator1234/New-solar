@@ -1,9 +1,11 @@
 "use client";
+import Image from "next/image";
 
 import { useState, useEffect } from "react";
 import {
   Eye,
   Edit3,
+  ImageOff,
   Trash2,
   Plus,
   Search,
@@ -515,24 +517,34 @@ const BlogPostsManager = () => {
                     {viewMode === "grid" ? (
                       // Grid View
                       <>
-                        {post.coverImage && (
-                          <div className="relative">
-                            <img
-                              src={post.coverImage}
-                              alt={post.altText || post.title}
-                              className="w-full h-48 object-cover rounded-t-lg"
-                            />
-                            <div className="absolute top-3 right-3">
-                              <span
-                                className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
-                                  post.status
-                                )}`}
-                              >
-                                {post.status}
-                              </span>
+                        <div className="relative">
+                          {post.coverImage ? (
+                            <div className="relative w-full h-48">
+                              <Image
+                                src={post.coverImage}
+                                alt={post.altText || post.title || "Blog Cover"}
+                                fill
+                                className="object-cover rounded-t-lg"
+                                sizes="100vw"
+                                priority={false}
+                              />
                             </div>
+                          ) : (
+                            <div className="w-full h-48 flex items-center justify-center rounded-t-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
+                              <ImageOff className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                            </div>
+                          )}
+
+                          <div className="absolute top-3 right-3">
+                            <span
+                              className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusColor(
+                                post.status
+                              )}`}
+                            >
+                              {post.status}
+                            </span>
                           </div>
-                        )}
+                        </div>
                         <div className="flex flex-col flex-1 p-6">
                           <div className="flex items-start justify-between mb-3">
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 flex-1">
@@ -643,15 +655,26 @@ const BlogPostsManager = () => {
                     ) : (
                       // List View
                       <div className="flex flex-col lg:flex-row lg:items-center gap-6">
-                        {post.coverImage && (
-                          <div className="w-full lg:w-32 lg:flex-shrink-0">
-                            <img
-                              src={post.coverImage}
-                              alt={post.altText || post.title}
-                              className="w-full h-20 lg:h-20 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
-                            />
-                          </div>
-                        )}
+                        <div className="w-full lg:w-32 lg:flex-shrink-0">
+                          {post.coverImage ? (
+                            <div className="relative w-full h-20 lg:h-20">
+                              <Image
+                                src={post.coverImage}
+                                alt={
+                                  post.altText || post.title || "Cover Image"
+                                }
+                                fill
+                                className="object-cover rounded-lg border border-gray-200 dark:border-gray-600"
+                                sizes="(min-width: 1024px) 8rem, 100vw"
+                                priority={false}
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-full h-20 lg:h-20 flex items-center justify-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
+                              <ImageOff className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+                            </div>
+                          )}
+                        </div>
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-2">

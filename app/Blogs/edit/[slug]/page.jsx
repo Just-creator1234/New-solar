@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import TagInput from "./TagInput";
 import TiptapEditor from "@/components/TiptapEditor";
+import Image from "next/image";
 import {
+  ImageOff,
   Loader2,
   Save,
   Eye,
@@ -155,7 +157,7 @@ export default function EditPostPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-comfort-cream dark:bg-gray-900 mt-10">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,9 +166,6 @@ export default function EditPostPage() {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Edit Blog Post
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Last saved 2 minutes ago
-              </p>
             </div>
             <div className="flex items-center space-x-3">
               <button
@@ -271,9 +270,11 @@ export default function EditPostPage() {
                       </label>
                       {post.coverImage ? (
                         <div className="relative">
-                          <img
+                          <Image
                             src={post.coverImage}
-                            alt={post.altText}
+                            alt={post.altText || "Cover Image"}
+                            width={1200}
+                            height={400}
                             className="w-full h-64 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
                           />
                           <button

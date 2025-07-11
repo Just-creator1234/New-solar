@@ -3,13 +3,14 @@ import SaveBookmarkButton from "./SaveBookmarkButton";
 import ShareBox from "./ShareBox";
 import { LikeButton, ViewCounter } from "./Dynamic";
 import ShareButton from "@/components/ShareButton";
-
+import Image from "next/image";
 import {
   Calendar,
   User,
   Clock,
   Share2,
   BookOpen,
+  ImageOff,
   ArrowLeft,
   Eye,
   Heart,
@@ -162,17 +163,20 @@ export default async function PublishedPostPage({ params }) {
       </nav>
 
       {/* Hero Section with Enhanced Image */}
-      {post.coverImage && (
+      {post.coverImage ? (
         <section className="relative">
           <div className="relative mx-auto max-w-6xl px-6 py-8">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-              <img
+              <Image
                 src={post.coverImage}
                 alt={post.altText || post.title}
-                className="w-full h-[400px] md:h-[500px] object-cover"
+                width={1920}
+                height={800}
+                className="w-full h-[400px] md:h-[500px] object-cover rounded-2xl"
+                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-              {/* Floating category badges on image */}
+
               {post.categories.length > 0 && (
                 <div className="absolute top-6 left-6 flex flex-wrap gap-2">
                   {post.categories.map((category) => (
@@ -185,6 +189,19 @@ export default async function PublishedPostPage({ params }) {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="relative">
+          <div className="relative mx-auto max-w-6xl px-6 py-8">
+            <div className="flex items-center justify-center h-[400px] md:h-[500px] rounded-2xl shadow-2xl bg-gray-100 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-600">
+              <div className="text-center">
+                <ImageOff className="w-10 h-10 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  No cover image
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -384,12 +401,18 @@ export default async function PublishedPostPage({ params }) {
                         className="flex gap-3 group"
                       >
                         <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">
-                          {related.coverImage && (
-                            <img
+                          {related.coverImage ? (
+                            <Image
                               src={related.coverImage}
                               alt={related.title}
-                              className="w-full h-full object-cover"
+                              width={400} // or adjust to suit layout
+                              height={250}
+                              className="w-full h-full object-cover rounded-md"
                             />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-600 rounded-md">
+                              <ImageOff className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+                            </div>
                           )}
                         </div>
                         <div className="flex-1">
