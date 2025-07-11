@@ -410,8 +410,7 @@ export default function EnhancedCreatePostPage() {
   }, [content]);
 
   const handleSaveDraft = async () => {
-
-       let coverImageUrl = "";
+    let coverImageUrl = "";
 
     // ⬆️ Upload image first, if present
     if (coverImageFile) {
@@ -452,7 +451,7 @@ export default function EnhancedCreatePostPage() {
     formData.append("focusKeyword", focusKeyword);
     formData.append("status", "DRAFT");
 
-   if (coverImageUrl) {
+    if (coverImageUrl) {
       formData.append("coverImage", coverImageUrl);
     }
 
@@ -535,67 +534,6 @@ export default function EnhancedCreatePostPage() {
     return Object.keys(errors).length === 0;
   };
 
-  // const handleSubmit = async (action) => {
-  //   if (!validateForm()) {
-  //     alert("Please fix the validation errors before publishing.");
-  //     return;
-  //   }
-
-  //   setIsSubmitting(true);
-
-  //   let finalStatus = status;
-  //   if (action === "publish" && status !== "SCHEDULED") {
-  //     finalStatus = "PUBLISHED";
-  //   }
-
-  //   const formData = new FormData();
-  //   formData.append("status", finalStatus); // ✅ dynamically resolved
-  //   formData.append("action", action);
-
-  //   // Append all other fields
-  //   formData.append("title", title);
-  //   formData.append("slug", slug);
-  //   formData.append("content", content);
-  //   formData.append("excerpt", excerpt);
-  //   formData.append("tags", JSON.stringify(tags));
-  //   formData.append("categories", JSON.stringify(selectedCategories));
-  //   formData.append("authorId", "sunlink-author");
-  //   formData.append("altText", altText);
-  //   formData.append("metaTitle", metaTitle);
-  //   formData.append("metaDescription", metaDescription);
-  //   formData.append("focusKeyword", focusKeyword);
-  //   formData.append("secret", "blackbills");
-
-  //   if (status === "PUBLISHED" || status === "SCHEDULED") {
-  //     formData.append("publishDate", new Date().toISOString());
-  //   }
-
-  //   if (coverImageFile) {
-  //     formData.append("image", coverImageFile);
-  //   }
-
-  //   try {
-  //     await createPost(formData);
-  //     router.push("/Blogs");
-
-  //     // Clear form
-  //     setTitle("");
-  //     setSlug("");
-  //     setContent("");
-  //     setExcerpt("");
-  //     setTags([]);
-  //     setSelectedCategories([]);
-  //     setCoverImageUrl("");
-  //     setCoverImageFile(null);
-  //     setAltText("");
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Failed to save post.");
-  //   } finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
   const handleSubmit = async (action) => {
     if (!validateForm()) {
       alert("Please fix the validation errors before publishing.");
@@ -653,7 +591,6 @@ export default function EnhancedCreatePostPage() {
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
     formData.append("focusKeyword", focusKeyword);
-    formData.append("secret", "blackbills");
 
     if (status === "PUBLISHED" || status === "SCHEDULED") {
       formData.append("publishDate", new Date().toISOString());

@@ -4,10 +4,7 @@ import prisma from "@/lib/prisma";
 export async function createPost(formData) {
   try {
     // 🔐 Secret check
-    const secret = formData.get("secret");
-    if (secret !== process.env.BLOG_UPLOAD_SECRET) {
-      return { error: "Unauthorized upload attempt" };
-    }
+    
 
     const data = {
       title: formData.get("title"),

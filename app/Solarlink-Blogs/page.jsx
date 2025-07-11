@@ -317,7 +317,7 @@ const SolarlinkBlogs = () => {
                 </div>
 
                 <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex flex-wrap items-center gap-3 mb-4">
                     {featuredPost.categories?.map((category) => (
                       <span
                         key={category.id}
