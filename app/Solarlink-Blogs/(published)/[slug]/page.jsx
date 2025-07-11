@@ -143,7 +143,7 @@ export default async function PublishedPostPage({ params }) {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link
-              href="/Blogs"
+              href="/Solarlink-Blogs"
               className="group inline-flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all duration-200"
             >
               <ArrowLeft
@@ -397,7 +397,7 @@ export default async function PublishedPostPage({ params }) {
                     {relatedPosts.map((related) => (
                       <Link
                         key={related.id}
-                        href={`/blog/published/${related.slug}`}
+                        href={`/Solarlink-Blogs/${related.slug}`}
                         className="flex gap-3 group"
                       >
                         <div className="w-16 h-16 rounded-lg bg-gray-200 dark:bg-gray-700 overflow-hidden flex-shrink-0">

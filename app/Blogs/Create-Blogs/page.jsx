@@ -8,7 +8,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useTransition } from "react";
 import { createCategory } from "@/app/actions/categoryActions";
 import { useRouter } from "next/navigation";
-import PostPreviewModal from "./PostPreviewModal";
+import PostPreviewModal from "../../../components/PostPreviewModal";
 import TiptapEditor from "@/components/TiptapEditor";
 import Image from "next/image";
 

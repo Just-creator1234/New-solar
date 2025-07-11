@@ -63,7 +63,7 @@ export default function EditPostPage() {
     const fetchPost = async () => {
       setLoading(true);
       const data = await getPostBySlug(slug);
-      console.log(data, "ggggggggg");
+
       if (data) {
         setPost({
           title: data.title || "",
@@ -159,11 +159,11 @@ export default function EditPostPage() {
   return (
     <div className="min-h-screen bg-comfort-cream dark:bg-gray-900 mt-10">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10 ">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 ">
+          <div className="flex justify-between items-center py-4 max-sm:flex-col max-sm:gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white max-sm:text-lg">
                 Edit Blog Post
               </h1>
             </div>
