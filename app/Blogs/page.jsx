@@ -720,7 +720,7 @@ const BlogPostsManager = () => {
                             href={
                               post.status === "DRAFT"
                                 ? `/Blogs/draft/${post.slug}`
-                                : `/Blogs/published/${post.slug}`
+                                : `/Solarlink-Blogs/${post.slug}`
                             }
                             className="flex items-center gap-2 px-3 py-2 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                             title="View post"

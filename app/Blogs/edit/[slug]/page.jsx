@@ -406,26 +406,6 @@ export default function EditPostPage() {
                 {activeTab === "settings" && (
                   <div className="space-y-6">
                     {/* Tags */}
-                    {/* <div>
-                      <label className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        <Tag className="w-4 h-4 mr-2" />
-                        Tags
-                      </label>
-                      <input
-                        type="text"
-                        value={post.tags.join(", ")}
-                        onChange={(e) =>
-                          setPost({
-                            ...post,
-                            tags: e.target.value
-                              .split(",")
-                              .map((t) => t.trim()),
-                          })
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Enter tags separated by commas..."
-                      />
-                    </div> */}
 
                     <TagInput
                       tags={post.tags}

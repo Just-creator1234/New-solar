@@ -49,6 +49,7 @@ function TiptapEditor({
   content,
   onChange,
   placeholder = "Write something amazing...",
+  className = "",
 }) {
   const editor = useEditor({
     extensions: [
@@ -102,7 +103,7 @@ function TiptapEditor({
   };
 
   return (
-    <div className="border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800">
+    <div className="rounded-lg bg-white dark:bg-gray-800 w-full h-full">
       <div className="flex flex-wrap gap-1 p-2 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 rounded-t-lg">
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
@@ -247,7 +248,7 @@ function TiptapEditor({
 
       <EditorContent
         editor={editor}
-        className="min-h-[400px] p-4 focus:outline-none prose dark:prose-invert max-w-none"
+        className={`w-full min-h-[400px] p-4 focus:outline-none prose dark:prose-invert max-w-none ${className}`}
       />
     </div>
   );
@@ -780,11 +781,20 @@ export default function EnhancedCreatePostPage() {
                       <div dangerouslySetInnerHTML={{ __html: content }} />
                     </div>
                   ) : (
-                    <TiptapEditor
-                      content={content}
-                      onChange={(html) => setContent(html)}
-                      placeholder="Write your post content here..."
-                    />
+                    <div className="min-h-[400px] border-none">
+                      {/* <TiptapEditor
+                        content={content}
+                        onChange={(html) => setContent(html)}
+                        placeholder="Write your post content here..."
+                      /> */}
+
+                      <TiptapEditor
+                        content={content}
+                        onChange={setContent}
+                        placeholder="Write your post content here..."
+                        className="min-h-[500px]"
+                      />
+                    </div>
                   )}
 
                   {validationErrors.content && (
