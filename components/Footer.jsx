@@ -43,7 +43,7 @@ const Footer = () => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="bg-comfort-cream shadow-2xl dark:bg-slate-900  border-t border-gray-200 dark:border-gray-700 py-12 px-4 text-gray-900 dark:text-gray-100 transition-colors duration-300"
+      className="bg-comfort-cream shadow-2xl dark:bg-slate-900  border-t border-gray-200 dark:border-gray-700  px-4 text-gray-900 dark:text-gray-100 transition-colors duration-300"
     >
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">

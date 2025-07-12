@@ -23,9 +23,8 @@ const EnhancedProductModal = ({
       : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl relative animate-fadeIn">
-        {/* Header */}
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm p-4 overflow-y-auto sm:flex sm:items-center sm:justify-center">
+      <div className="bg-white dark:bg-gray-900 rounded-md max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative animate-fadeIn">
         <div className="absolute top-4 right-4 z-10 flex gap-2">
           <button
             className="p-2 rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 shadow-lg"
@@ -83,7 +82,7 @@ const EnhancedProductModal = ({
           </div>
 
           {/* Right Side - Content */}
-          <div className="flex flex-col h-full max-h-[90vh] overflow-y-auto">
+          <div className="flex flex-col h-full overflow-y-auto">
             <div className="p-8 flex-1">
               {/* Product Header */}
               <div className="mb-6">

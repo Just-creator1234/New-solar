@@ -375,192 +375,190 @@ const SolarProductShowcase = () => {
   };
 
   return (
-    <ScrollFadeIn>
-      <section className="py-16 sm:py-20 bg-gradient-to-br from-orange-50 via-amber-50 shadow-2xl to-yellow-50  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="max-w-7xl mx-auto px-2 sm:px-6 ">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border border-orange-300 dark:border-orange-700 bg-orange-100/20 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 mb-4">
-              <Sun className="w-4 h-4 mr-2" />
-              Complete Solar Collection
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                Premium Solar
-              </span>
-              <br />
-              <span className="text-gray-800 dark:text-white">
-                Products & Solutions
-              </span>
-            </h2>
-
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
-              Discover our comprehensive range of high-performance solar
-              products designed to meet every energy need from residential to
-              commercial applications.
-            </p>
+    <section className="py-16 sm:py-20 bg-gradient-to-br from-orange-50 via-amber-50 shadow-2xl to-yellow-50  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 ">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium border border-orange-300 dark:border-orange-700 bg-orange-100/20 dark:bg-orange-900/10 text-orange-600 dark:text-orange-400 mb-4">
+            <Sun className="w-4 h-4 mr-2" />
+            Complete Solar Collection
           </div>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {categories.map((category) => {
-              const Icon = category.icon;
-              return (
-                <button
-                  key={category.id}
-                  onClick={() => setActiveCategory(category.id)}
-                  className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                    activeCategory === category.id
-                      ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25"
-                      : "bg-white/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-gray-200 dark:border-gray-700"
-                  }`}
-                >
-                  <Icon className="w-4 h-4 mr-2" />
-                  {category.name}
-                </button>
-              );
-            })}
-          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+              Premium Solar
+            </span>
+            <br />
+            <span className="text-gray-800 dark:text-white">
+              Products & Solutions
+            </span>
+          </h2>
 
-          {/* Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProducts.map((product, index) => (
-              <div
-                key={product.id}
-                className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
-                onMouseEnter={() => setHoveredProduct(product.id)}
-                onMouseLeave={() => setHoveredProduct(null)}
-                style={{
-                  animationName: "slideInUp",
-                  animationDuration: "0.6s",
-                  animationTimingFunction: "ease-out",
-                  animationFillMode: "forwards",
-                  animationDelay: `${index * 100}ms`,
-                }}
-              >
-                {/* Product Image */}
-                <div className="relative h-52 overflow-hidden">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-full object-cover  object-center transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-t ${product.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
-                  />
-
-                  {/* Floating Badge */}
-                  <div className="absolute top-4 right-4">
-                    <div
-                      className={`px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${product.gradient} shadow-lg`}
-                    >
-                      {product.efficiency}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Product Content */}
-                <div className="p-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide">
-                      {product.type}
-                    </span>
-                    <span className="text-sm font-bold text-gray-500 dark:text-gray-400">
-                      {product.power}
-                    </span>
-                  </div>
-
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
-                    {product.name}
-                  </h3>
-
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
-                      {product.price}
-                    </span>
-                    <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      <Shield className="w-4 h-4 mr-1" />
-                      Warranty
-                    </div>
-                  </div>
-
-                  {/* Features */}
-                  <div className="space-y-2 mb-6">
-                    {product.features.map((feature, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center text-sm text-gray-600 dark:text-gray-300"
-                      >
-                        <div className="w-2 h-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full mr-3" />
-                        {feature}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* CTA Button */}
-                  <button
-                    onClick={() => setSelectedProduct(product)}
-                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                  >
-                    View Details
-                  </button>
-                </div>
-
-                {/* Hover Effect Overlay */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}
-                />
-              </div>
-            ))}
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="text-center mt-16">
-            <div className="inline-flex items-center space-x-4">
-              <div className="text-center ">
-                <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  {showAll ? "Show Less" : "View All Products"}
-                </button>
-              </div>
-
-              <Link
-                href={"/contact"}
-                className="border-2 border-orange-500 text-orange-600 dark:text-orange-400 px-8 py-4 rounded-lg font-semibold hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
-              >
-                Learn More
-              </Link>
-            </div>
-          </div>
+          <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto text-lg leading-relaxed">
+            Discover our comprehensive range of high-performance solar products
+            designed to meet every energy need from residential to commercial
+            applications.
+          </p>
         </div>
 
-        <style jsx>{`
-          @keyframes slideInUp {
-            from {
-              opacity: 0;
-              transform: translateY(30px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-        `}</style>
+        {/* Category Filter */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                  activeCategory === category.id
+                    ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25"
+                    : "bg-white/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-gray-200 dark:border-gray-700"
+                }`}
+              >
+                <Icon className="w-4 h-4 mr-2" />
+                {category.name}
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Product Details Modal */}
-        {selectedProduct && (
-          <EnhancedProductModal
-            product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
-            isFavorite={favorites.includes(selectedProduct.id)}
-            onFavoriteToggle={() => toggleFavorite(selectedProduct.id)}
-          />
-        )}
-      </section>
-    </ScrollFadeIn>
+        {/* Products Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredProducts.map((product, index) => (
+            <div
+              key={product.id}
+              className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
+              onMouseEnter={() => setHoveredProduct(product.id)}
+              onMouseLeave={() => setHoveredProduct(null)}
+              style={{
+                animationName: "slideInUp",
+                animationDuration: "0.6s",
+                animationTimingFunction: "ease-out",
+                animationFillMode: "forwards",
+                animationDelay: `${index * 100}ms`,
+              }}
+            >
+              {/* Product Image */}
+              <div className="relative h-52 overflow-hidden">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover  object-center transition-transform duration-500 group-hover:scale-110"
+                />
+                <div
+                  className={`absolute inset-0 bg-gradient-to-t ${product.gradient} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
+                />
+
+                {/* Floating Badge */}
+                <div className="absolute top-4 right-4">
+                  <div
+                    className={`px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${product.gradient} shadow-lg`}
+                  >
+                    {product.efficiency}
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Content */}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide">
+                    {product.type}
+                  </span>
+                  <span className="text-sm font-bold text-gray-500 dark:text-gray-400">
+                    {product.power}
+                  </span>
+                </div>
+
+                <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
+                  {product.name}
+                </h3>
+
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                    {product.price}
+                  </span>
+                  <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                    <Shield className="w-4 h-4 mr-1" />
+                    Warranty
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="space-y-2 mb-6">
+                  {product.features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-center text-sm text-gray-600 dark:text-gray-300"
+                    >
+                      <div className="w-2 h-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full mr-3" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <button
+                  onClick={() => setSelectedProduct(product)}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  View Details
+                </button>
+              </div>
+
+              {/* Hover Effect Overlay */}
+              <div
+                className={`absolute inset-0 bg-gradient-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="text-center mt-16">
+          <div className="inline-flex items-center space-x-4">
+            <div className="text-center ">
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                {showAll ? "Show Less" : "View All Products"}
+              </button>
+            </div>
+
+            <Link
+              href={"/contact"}
+              className="border-2 border-orange-500 text-orange-600 dark:text-orange-400 px-8 py-4 rounded-lg font-semibold hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-all duration-300"
+            >
+              Learn More
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <style jsx>{`
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+
+      {/* Product Details Modal */}
+      {selectedProduct && (
+        <EnhancedProductModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          isFavorite={favorites.includes(selectedProduct.id)}
+          onFavoriteToggle={() => toggleFavorite(selectedProduct.id)}
+        />
+      )}
+    </section>
   );
 };
 
