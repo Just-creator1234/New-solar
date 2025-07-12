@@ -6,16 +6,13 @@
 
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-
-
 
 model User {
   id        String   @id @default(cuid())
@@ -27,48 +24,44 @@ model User {
 }
 
 model Post {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
-  slug        String   @unique
-  content     String   @db.Text
+  slug        String     @unique
+  content     String     @db.Text
   excerpt     String?
   status      PostStatus @default(DRAFT)
   password    String?
   publishDate DateTime?
   coverImage  String?
   altText     String?
-  wordCount   Int      @default(0)
-  readingTime Int      @default(0)
-  publishedAt DateTime? 
+  wordCount   Int        @default(0)
+  readingTime Int        @default(0)
+  publishedAt DateTime?
 
-  
-  
   // Relations
-  author      User     @relation(fields: [authorId], references: [id])
-  authorId    String
-  categories    Category[] 
-  tags     Tag[]  
-  
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   String
+  categories Category[]
+  tags       Tag[]
+
   // SEO
   metaTitle       String?
   metaDescription String?
   focusKeyword    String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
   @@index([status])
   @@index([slug])
   @@index([authorId])
 }
 
 model Category {
-  id       String   @id @default(cuid())
-  name     String   @unique
-  slug     String   @unique
-  posts    Post[]   
+  id    String @id @default(cuid())
+  name  String @unique
+  slug  String @unique
+  posts Post[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -86,17 +79,13 @@ enum PostStatus {
   SCHEDULED
 }
 
-
 model ContactMessage {
   id        String   @id @default(cuid())
   name      String
   email     String
-  phone     String?    // Optional
-  service   String?    // Optional (e.g., solar-installation)
-  subject   String?    // Optional (can be blank)
+  phone     String? // Optional
+  service   String? // Optional (e.g., solar-installation)
+  subject   String? // Optional (can be blank)
   message   String
   createdAt DateTime @default(now())
 }
-
-
-
