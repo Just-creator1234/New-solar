@@ -24,26 +24,17 @@ const LiveMap = dynamic(() => import("@/components/LiveMap"), {
 });
 
 const ContactPage = () => {
-  const services = [
-    { value: "solar-installation", label: "Solar Installation" },
-    { value: "energy-audit", label: "Energy Audit" },
-    { value: "maintenance", label: "Maintenance & Repair" },
-    { value: "consultation", label: "Consultation" },
-    { value: "financing", label: "Financing Options" },
-    { value: "other", label: "Other" },
-  ];
-
   const contactInfo = [
     {
       icon: Phone,
       title: "Phone",
-      details: ["+1 (555) 123-SOLAR", "+1 (555) 123-7652"],
+      details: ["+233 241926409"],
       color: "var(--color-sunlink-orange-500)",
     },
     {
       icon: Mail,
       title: "Email",
-      details: ["info@sunlinkpower.com", "sales@sunlinkpower.com"],
+      details: ["info@sunlinkpower.com", "sunlinksolarenterterprise@gmail.com"],
       color: "var(--color-sunlink-blue-500)",
     },
     {
@@ -89,18 +80,6 @@ const ContactPage = () => {
           </p>
         ))}
       </div>
-    </div>
-  );
-
-  const SuccessMessage = () => (
-    <div className="text-center py-12">
-      <CheckCircle className="w-16 h-16 mx-auto mb-4 text-green-500" />
-      <h3 className="text-xl font-bold mb-2 text-sky-800 dark:text-slate-100">
-        Message Sent Successfully!
-      </h3>
-      <p className="text-sky-600 dark:text-slate-300">
-        We'll get back to you within 24 hours.
-      </p>
     </div>
   );
 

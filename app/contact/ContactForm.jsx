@@ -122,7 +122,7 @@ const handleSubmit = async (e) => {
               value={formData.phone}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="(555) 123-4567"
+              placeholder="0200 000 000"
             />
           </div>
 
