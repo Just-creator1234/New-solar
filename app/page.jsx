@@ -5,7 +5,7 @@ import AnimatedDivider from "@/components/AnimatedDivider";
 import ProductShowcase from "@/components/ProductShowcase";
 import KeyProduct from "@/components/KeyProduct";
 import NavbarNew from "@/components/NavbarNew";
-
+import SolarProductShowcase from "@/components/SolarProductShowcase";
 import Service from "@/components/Service";
 import Testiomony from "@/components/Testiomony";
 import Footer from "@/components/Footer";
@@ -16,7 +16,7 @@ export default function Home() {
       <Hero />
       <AnimatedStatsSection />
       <KeyProduct />
-      <ProductShowcase />
+      <SolarProductShowcase />
       <Service />
       <Testiomony />
       <Footer />
