@@ -13,6 +13,7 @@ import TiptapEditor from "@/components/TiptapEditor";
 import Image from "next/image";
 import { autoSavePost } from "@/app/actions/autoSavePost";
 import toast from "react-hot-toast";
+import { deleteCategory } from "@/app/actions/deleteCategory";
 
 import {
   FiBold,
@@ -170,22 +171,41 @@ export default function EnhancedCreatePostPage() {
     }
   }
 
+  // const handleDeleteCategory = async (id) => {
+  //   try {
+  //     const res = await fetch(`/api/categories/${id}`, {
+  //       method: "DELETE",
+  //     });
+
+  //     if (!res.ok) {
+  //       const errorData = await res.json(); // get message from API
+  //       throw new Error(errorData.message || "Failed to delete category");
+  //     }
+
+  //     // Remove from local state if successful
+  //     setCategories((prev) => prev.filter((cat) => cat.id !== id));
+  //     setValidationErrors({}); // clear previous errors
+  //   } catch (error) {
+  //     // Set the error in validationErrors
+  //     setValidationErrors((prev) => ({
+  //       ...prev,
+  //       deleteCategory: error.message,
+  //     }));
+  //   }
+  // };
+
   const handleDeleteCategory = async (id) => {
     try {
-      const res = await fetch(`/api/categories/${id}`, {
-        method: "DELETE",
-      });
+      const res = await deleteCategory(id);
 
-      if (!res.ok) {
-        const errorData = await res.json(); // get message from API
-        throw new Error(errorData.message || "Failed to delete category");
+      if (!res.success) {
+        throw new Error(res.message || "Failed to delete category");
       }
 
       // Remove from local state if successful
       setCategories((prev) => prev.filter((cat) => cat.id !== id));
       setValidationErrors({}); // clear previous errors
     } catch (error) {
-      // Set the error in validationErrors
       setValidationErrors((prev) => ({
         ...prev,
         deleteCategory: error.message,
