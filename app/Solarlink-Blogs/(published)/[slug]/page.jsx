@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import SaveBookmarkButton from "./SaveBookmarkButton";
 import ShareBox from "./ShareBox";
-import { LikeButton, ViewCounter } from "./Dynamic";
+import { LikeButton, ViewCounter } from "@/components/Dynamic";
 import ShareButton from "@/components/ShareButton";
 import Image from "next/image";
 import {

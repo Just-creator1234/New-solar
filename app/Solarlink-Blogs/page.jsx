@@ -1,8 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { LikeButton, ViewCounter } from "@/components/Dynamic";
 
 import {
+  ImageOff,
   Calendar,
   ChevronDown,
   X,
@@ -185,16 +189,19 @@ const SolarlinkBlogs = () => {
               {/* Filter Section */}
               <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
                 {/* Category Filter */}
-                <div className="relative flex-1">
-                  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
-                    <Folder className="w-4 h-4" />
+                <div className="relative w-full max-w-full sm:max-w-xs md:max-w-sm lg:max-w-md xl:max-w-lg mx-auto">
+                  {/* Left Icon */}
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                    <Folder className="w-5 h-5" />
                   </div>
+
+                  {/* Dropdown */}
                   <select
                     value={selectedCategory || ""}
                     onChange={(e) =>
                       setSelectedCategory(e.target.value || null)
                     }
-                    className="w-full pl-10 pr-8 py-3 rounded-xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-200 shadow-md hover:shadow-lg appearance-none cursor-pointer"
+                    className="w-full pl-12 pr-10 py-3 rounded-lg border border-orange-300 dark:border-slate-700 bg-white/80 dark:bg-slate-800/80 text-sm sm:text-base text-gray-700 dark:text-gray-100 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400/50 dark:focus:ring-orange-500/50 focus:border-orange-400 dark:focus:border-orange-500 transition-all appearance-none backdrop-blur-md"
                   >
                     <option value="">All Categories</option>
                     {allCategories.map((cat) => (
@@ -203,7 +210,9 @@ const SolarlinkBlogs = () => {
                       </option>
                     ))}
                   </select>
-                  <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+
+                  {/* Chevron Icon */}
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                     <ChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                   </div>
                 </div>
@@ -301,17 +310,21 @@ const SolarlinkBlogs = () => {
               <div className="lg:flex">
                 <div className="lg:w-1/2">
                   <div className="relative h-64 lg:h-full overflow-hidden">
-                    <img
-                      src={featuredPost.coverImage || "/default-cover.jpg"}
-                      alt={featuredPost.altText || featuredPost.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                    />
+                    {featuredPost.coverImage ? (
+                      <Image
+                        src={featuredPost.coverImage}
+                        alt={featuredPost.altText || featuredPost.title}
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-500 rounded-lg"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full border border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+                        <ImageOff className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-black/60"></div>
                     <div className="absolute top-4 right-4 flex items-center gap-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-3 py-1 rounded-full">
-                      <Eye className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        {featuredPost.wordCount} words
-                      </span>
+                      <ViewCounter />
                     </div>
                   </div>
                 </div>
@@ -394,9 +407,14 @@ const SolarlinkBlogs = () => {
                   </div>
 
                   <button className="inline-flex justify-between items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-blue-500 text-white rounded-full font-semibold hover:from-orange-600 hover:to-blue-600 transition-all shadow-lg hover:shadow-xl group">
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="w-5 h-5" />
-                      Read Full Article
+                    <div>
+                      <Link
+                        href={`/Solarlink-Blogs/${featuredPost.slug}`}
+                        className="flex items-center gap-2"
+                      >
+                        <BookOpen className="w-5 h-5" />
+                        Read Full Article
+                      </Link>
                     </div>
 
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -421,14 +439,23 @@ const SolarlinkBlogs = () => {
             {regularPosts.map((post) => (
               <article
                 key={post.id}
-                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer border border-orange-200/50 dark:border-slate-600/50 hover:border-orange-300 dark:hover:border-slate-500"
+                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group  border border-orange-200/50 dark:border-slate-600/50 hover:border-orange-300 dark:hover:border-slate-500"
               >
                 <div className="relative overflow-hidden">
-                  <img
-                    src={post.coverImage || "/default-cover.jpg"}
-                    alt={post.altText || post.title || "Post image"}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                  <div className="w-full h-48 relative">
+                    {post.coverImage ? (
+                      <Image
+                        src={post.coverImage}
+                        alt={post.altText || post.title || "Post image"}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full border border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+                        <ImageOff className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                      </div>
+                    )}
+                  </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute top-4 left-4">
                     {post.categories?.map((category) => (
@@ -442,10 +469,7 @@ const SolarlinkBlogs = () => {
                     ))}
                   </div>
                   <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-1 rounded-full">
-                    <Eye className="w-3 h-3 text-gray-600 dark:text-gray-400" />
-                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                      {post.wordCount} words
-                    </span>
+                    <ViewCounter />
                   </div>
                 </div>
 
@@ -510,8 +534,13 @@ const SolarlinkBlogs = () => {
 
                   <div className="flex items-center justify-between">
                     <button className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-medium text-sm hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
-                      <BookOpen className="w-4 h-4" />
-                      Read More
+                      <Link
+                        href={`/Solarlink-Blogs/${post.slug}`}
+                        className="flex items-center gap-2"
+                      >
+                        <BookOpen className="w-4 h-4" />
+                        Read More
+                      </Link>
                     </button>
                     <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
                   </div>
