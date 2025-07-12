@@ -156,15 +156,18 @@ export default function TiptapEditor({
       </div>
 
       {/* Editor */}
-      <div className="flex-1 relative">
+      {/* <div className="flex-1 relative">
         <EditorContent
           editor={editor}
           className={`w-full h-full absolute inset-0 ${className}`}
-        />
+        /> */}
+
+      <div className="relative">
+        <EditorContent editor={editor} className={`w-full ${className}`} />
+
         <style jsx global>{`
           .ProseMirror {
             width: 100% !important;
-            height: 100% !important;
             min-height: 400px !important;
             padding: 1rem !important;
             outline: none !important;

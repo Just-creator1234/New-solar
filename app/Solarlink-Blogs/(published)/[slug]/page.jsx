@@ -275,7 +275,11 @@ export default async function PublishedPostPage({ params }) {
               <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg overflow-hidden">
                 <div className="p-8 md:p-12">
                   <div
-                    className="prose prose-lg dark:prose-invert max-w-none prose-headings:text-gray-900 dark:prose-headings:text-white prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-strong:text-gray-900 dark:prose-strong:text-white"
+                    className="prose prose-lg dark:prose-invert max-w-none break-words whitespace-normal
+             prose-headings:text-gray-900 dark:prose-headings:text-white 
+             prose-p:text-gray-700 dark:prose-p:text-gray-300 
+             prose-a:text-blue-600 dark:prose-a:text-blue-400 
+             prose-strong:text-gray-900 dark:prose-strong:text-white"
                     dangerouslySetInnerHTML={{ __html: post.content }}
                   />
                 </div>

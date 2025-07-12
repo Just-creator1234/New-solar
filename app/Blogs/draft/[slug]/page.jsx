@@ -181,16 +181,11 @@ export default async function DraftPostPage({ params }) {
         <article className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-8">
           <div className="p-6 sm:p-8 lg:p-12">
             <div
-              className="prose prose-lg dark:prose-invert max-w-none 
-                prose-headings:scroll-mt-16 prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl 
-                prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed
-                prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline prose-a:font-medium
-                prose-blockquote:border-l-4 prose-blockquote:border-blue-500 prose-blockquote:bg-blue-50/50 dark:prose-blockquote:bg-blue-900/10 
-                prose-blockquote:p-4 prose-blockquote:rounded-r-lg prose-blockquote:not-italic
-                prose-code:bg-gray-100 dark:prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:font-medium
-                prose-pre:bg-gray-900 dark:prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-200 dark:prose-pre:border-gray-700 prose-pre:shadow-lg
-                prose-img:rounded-xl prose-img:shadow-md"
+              className="prose prose-lg dark:prose-invert max-w-none break-words whitespace-normal
+             prose-headings:text-gray-900 dark:prose-headings:text-white 
+             prose-p:text-gray-700 dark:prose-p:text-gray-300 
+             prose-a:text-blue-600 dark:prose-a:text-blue-400 
+             prose-strong:text-gray-900 dark:prose-strong:text-white"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </div>
