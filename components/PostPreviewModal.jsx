@@ -4,7 +4,8 @@ import { BookOpen, Calendar, Clock, Share2, User, X, Tag } from "lucide-react";
 import Link from "next/link";
 
 export default function PostPreviewModal({ onClose, post }) {
-
+  console.log(post.categories, "cat");
+  console.log(post.categories.id, "id");
   const readingTime = Math.ceil(
     post.content.replace(/<[^>]*>/g, "").split(" ").length / 200
   );
@@ -69,14 +70,15 @@ export default function PostPreviewModal({ onClose, post }) {
               {/* Categories */}
               {post.categories?.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
-                  {post.categories.map((cat) => (
-                    <span
-                      key={cat.id}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
-                    >
-                      {cat.name}
-                    </span>
-                  ))}
+                  {post.categories &&
+                    post.categories.map((cat, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700"
+                      >
+                        {cat.trim()}
+                      </span>
+                    ))}
                 </div>
               )}
 

@@ -1,8 +1,8 @@
-
-
 "use client";
 import React from "react";
 import { Sun, Facebook, Twitter, Instagram } from "lucide-react";
+import { SiTiktok } from "react-icons/si";
+
 import { motion } from "framer-motion";
 
 const Footer = () => {
@@ -28,9 +28,13 @@ const Footer = () => {
   ];
 
   const socials = [
-    { icon: <Instagram />, href: "https://instagram.com" },
-    { icon: <Twitter />, href: "https://twitter.com" },
-    { icon: <Facebook />, href: "https://facebook.com" },
+    {
+      icon: <Instagram />,
+      href: "https://www.instagram.com/sunlinksolarenterprise/",
+    },
+    { icon: <Twitter />, href: "https://x.com/Sunlinksolarent" },
+    { icon: <Facebook />, href: "https://facebook.com/sunlinksolarenterprise" },
+    { icon: <SiTiktok />, href: "https://www.tiktok.com/@sunlinksolarenter" },
   ];
 
   return (
@@ -131,9 +135,7 @@ const Footer = () => {
                   >
                     {link.name}
                     {link.badge && (
-                      <span
-                        className="px-2 py-0.5 text-xs rounded-full font-medium bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400"
-                      >
+                      <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
                         {link.badge}
                       </span>
                     )}

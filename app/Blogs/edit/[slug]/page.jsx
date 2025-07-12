@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import TagInput from "./TagInput";
 import TiptapEditor from "@/components/TiptapEditor";
 import Image from "next/image";
+import PostPreviewModal from "@/components/PostPreviewModal";
 import {
   ImageOff,
   Loader2,
@@ -18,6 +19,7 @@ import {
   Search,
   Calendar,
 } from "lucide-react";
+import { FiEdit, FiEye } from "react-icons/fi";
 
 import { updatePost, getPostBySlug } from "@/app/actions/editPost";
 import { getAllCategories } from "@/app/actions/getCategories";
@@ -28,7 +30,7 @@ export default function EditPostPage() {
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState("content");
   const [categories, setCategories] = useState([]);
-
+  const [showPreview, setShowPreview] = useState(false);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -169,11 +171,15 @@ export default function EditPostPage() {
             </div>
             <div className="flex items-center space-x-3">
               <button
-                type="button"
-                className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+                onClick={() => setShowPreview(!showPreview)}
+                className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
               >
-                <Eye className="w-4 h-4 mr-2" />
-                Preview
+                {showPreview ? (
+                  <FiEdit className="mr-2" />
+                ) : (
+                  <FiEye className="mr-2" />
+                )}
+                {showPreview ? "Edit" : "Preview"}
               </button>
               <button
                 type="submit"
@@ -573,6 +579,24 @@ export default function EditPostPage() {
           </div>
         </div>
       </div>
+
+      {showPreview && (
+        <PostPreviewModal
+          onClose={() => setShowPreview(false)}
+          post={{
+            title: post.title,
+            excerpt: post.excerpt,
+            content: post.content,
+            coverImageUrl: post.coverImage, // assuming this is the actual image URL
+            altText: post.altText,
+            categories: post.categories,
+            tags: post.tags.map((tag, i) => ({
+              id: tag.id || i.toString(), // support both fetched and typed tags
+              name: tag.name || tag, // support both string or object
+            })),
+          }}
+        />
+      )}
     </div>
   );
 }
