@@ -239,7 +239,7 @@ const textVariants = {
 export default function ServiceSection() {
   return (
     <ScrollFadeIn>
-      <section className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 shadow-2xl to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      <section id="services" className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 shadow-2xl to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <div className="max-w-6xl mx-auto text-center">
           <motion.h2
             initial={{ opacity: 0, y: -30 }}

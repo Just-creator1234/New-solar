@@ -269,7 +269,9 @@ export default function DiagonalHeroSection() {
             {/* Call to Action */}
             <div className="flex flex-col sm:flex-row gap-3 pt-2 items-center justify-center lg:justify-start">
               <button className="group relative px-5 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all w-full sm:w-auto">
-                <span className="relative z-10">Our Product</span>
+                <a href="#product-showcase" className="relative z-10">
+                  Our Product
+                </a>
               </button>
 
               <Link

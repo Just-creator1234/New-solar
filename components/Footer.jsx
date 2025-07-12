@@ -7,24 +7,24 @@ import { motion } from "framer-motion";
 
 const Footer = () => {
   const productLinks = [
-    { name: "Solar Panels", href: "#solar-panels" },
-    { name: "LED Lights", href: "#led-lights", badge: "Pro" },
-    { name: "Energy Storage", href: "#energy-storage" },
-    { name: "Smart Controls", href: "#smart-controls" },
+    { name: "Solar Panels", href: "#product-showcase" },
+    { name: "LED Lights", href: "#product-showcase", badge: "Pro" },
+    { name: "Energy Storage", href: "#product-showcase" },
+    { name: "Smart Controls", href: "#product-showcase" },
   ];
 
   const resourceLinks = [
-    { name: "Blog", href: "#blog" },
-    { name: "Webinars", href: "#webinars", badge: "New" },
-    { name: "Case Studies", href: "#case-studies" },
-    { name: "Help Center", href: "#help-center" },
+    { name: "Blog", href: "/Solarlink-Blogs" },
+    { name: "Webinars", href: "/Solarlink-Blogs", badge: "New" },
+    { name: "Case Studies", href: "/Solarlink-Blogs" },
+    { name: "Help Center", href: "/contact" },
   ];
 
   const companyLinks = [
-    { name: "About Us", href: "#about" },
-    { name: "Careers", href: "#careers", badge: "Hiring" },
-    { name: "Partners", href: "#partners" },
-    { name: "Contact", href: "#contact" },
+    { name: "About Us", href: "/About" },
+    { name: "Careers", href: "/contact", badge: "Hiring" },
+    { name: "Partners", href: "/Solarlink-Blogs" },
+    { name: "Contact", href: "/contact" },
   ];
 
   const socials = [
