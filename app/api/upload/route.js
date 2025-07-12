@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { uploadFile } from "@/lib/upload";
 
 export async function POST(request) {
