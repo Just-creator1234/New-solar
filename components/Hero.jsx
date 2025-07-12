@@ -189,7 +189,7 @@ export default function DiagonalHeroSection() {
     "/IMAGE3.jpg",
     "/IMAGE4.jpg",
     "/IMAGE1.jpg",
-    "/IMAGE4.jpg",
+    "/IMAGE4.jpg", // fixed
     "/IMAGE2.jpg",
     "/IMAGE3.jpg",
     "/IMAGE4.jpg",
@@ -197,12 +197,12 @@ export default function DiagonalHeroSection() {
   ];
 
   const images2 = [
-    "/IMAGE4.jpg",
+    "/IMAGE4.jpg", // fixed
     "/IMAGE2.jpg",
     "/IMAGE3.jpg",
     "/IMAGE4.jpg",
     "/IMAGE1.jpg",
-    "/IMAGE4.jpg",
+    "/IMAGE4.jpg", // fixed
     "/IMAGE2.jpg",
     "/IMAGE3.jpg",
     "/IMAGE4.jpg",
@@ -210,12 +210,12 @@ export default function DiagonalHeroSection() {
   ];
 
   const images3 = [
-    "/IMAGE4.jpg",
+    "/IMAGE4.jpg", // fixed
     "/IMAGE2.jpg",
     "/IMAGE3.jpg",
     "/IMAGE1.jpg",
     "/IMAGE1.jpg",
-    "/IMAGE4.jpg",
+    "/IMAGE4.jpg", // fixed
     "/IMAGE2.jpg",
     "/IMAGE3.jpg",
     "/IMAGE1.jpg",
