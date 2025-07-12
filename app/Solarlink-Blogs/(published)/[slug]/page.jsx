@@ -308,7 +308,7 @@ export default async function PublishedPostPage({ params }) {
 
             {/* Enhanced Action Buttons */}
             <div className="mb-10 p-6 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-2xl border border-gray-200/50 dark:border-gray-700/50 shadow-lg">
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-4 max-sm:flex-col ">
                 <LikeButton />
                 <ShareButton title={post.title} />
                 <SaveBookmarkButton />

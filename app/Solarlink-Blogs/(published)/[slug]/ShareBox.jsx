@@ -22,7 +22,7 @@ export default function ShareBox({ title, slug }) {
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
         Share this article
       </h3>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 ">
         <a
           href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
             shareUrl
