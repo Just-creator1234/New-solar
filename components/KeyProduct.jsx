@@ -722,7 +722,7 @@ const KeyProduct = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
               >
                 <motion.img
-                  src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
+                  src="/IMAGE2.jpg"
                   alt="Key Solar Light Product"
                   className="w-full h-96 lg:h-[600px] object-cover"
                   whileHover={{ scale: 1.1 }}
@@ -759,31 +759,6 @@ const KeyProduct = () => {
               </motion.div>
 
               {/* Decorative elements */}
-              <motion.div
-                className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-orange-400 to-yellow-400 dark:from-orange-500/60 dark:to-yellow-500/60 rounded-full blur-xl opacity-20"
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.2, 0.4, 0.2],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              />
-              <motion.div
-                className="absolute -bottom-4 -left-4 w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-400 dark:from-yellow-500/60 dark:to-orange-500/60 rounded-full blur-xl opacity-20"
-                animate={{
-                  scale: [1, 1.3, 1],
-                  opacity: [0.2, 0.5, 0.2],
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-              />
             </motion.div>
           </div>
         </motion.div>
