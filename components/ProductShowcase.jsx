@@ -108,7 +108,7 @@ export default function ProductShowcase() {
   return (
     <section
       id="product-showcase"
-      className="w-full min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 py-20 px-4 overflow-hidden text-gray-900 dark:text-gray-100 transition-colors duration-300"
+      className="w-full min-h-screen shadow-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 py-20 px-4 overflow-hidden text-gray-900 dark:text-gray-100 transition-colors duration-300"
     >
       <style jsx>{`
         :root {

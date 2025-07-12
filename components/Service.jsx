@@ -110,6 +110,7 @@
 
 "use client";
 import { motion } from "framer-motion";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 import {
   Sun,
   Wrench,
@@ -237,86 +238,88 @@ const textVariants = {
 
 export default function ServiceSection() {
   return (
-    <section className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <div className="max-w-6xl mx-auto text-center">
-        <motion.h2
-          initial={{ opacity: 0, y: -30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          viewport={{ once: true }}
-          className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 transition-colors duration-300"
-        >
-          Our{" "}
-          <span className=" text-orange-400 dark:text-orange-400">
-            Solar Services
-          </span>
-        </motion.h2>
+    <ScrollFadeIn>
+      <section className="py-10 px-6 bg-gradient-to-br from-orange-50 via-amber-50 shadow-2xl to-yellow-50 dark:from-slate-900 dark:via-gray-900 dark:to-slate-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+        <div className="max-w-6xl mx-auto text-center">
+          <motion.h2
+            initial={{ opacity: 0, y: -30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-12 transition-colors duration-300"
+          >
+            Our{" "}
+            <span className=" text-orange-400 dark:text-orange-400">
+              Solar Services
+            </span>
+          </motion.h2>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {services.map((service, i) => (
-            <motion.div
-              key={i}
-              variants={cardVariants}
-              whileHover={{
-                scale: 1.05,
-                rotateY: 5,
-                transition: { duration: 0.3 },
-              }}
-              className={`relative overflow-hidden rounded-2xl p-6 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 transition-all duration-300 group cursor-pointer`}
-              style={{
-                boxShadow:
-                  "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-              }}
-              whileHoverStyle={{
-                boxShadow:
-                  "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-              }}
-            >
-              {/* Enhanced decorative elements */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-white/20 dark:from-slate-600/20 to-transparent rounded-full blur-xl opacity-40 pointer-events-none z-0" />
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {services.map((service, i) => (
               <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.4 }}
-                className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/0 to-[rgba(255,255,255,0.08)] dark:from-slate-700/0 dark:to-slate-600/10 opacity-0 group-hover:opacity-80 transition-opacity duration-300 z-0"
-              />
-
-              <div className="flex items-center gap-3 relative z-10">
-                <motion.div
-                  variants={iconVariants}
-                  whileHover={{
-                    rotate: [0, -10, 10, 0],
-                    transition: { duration: 0.5 },
-                  }}
-                  className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${service.color} shadow-md mb-3 border-2 border-white/20 dark:border-slate-700/30 group-hover:scale-110 transition-transform duration-300`}
-                >
-                  {service.icon}
-                </motion.div>
-
-                <motion.h3
-                  variants={textVariants}
-                  className="text-xl font-semibold text-orange-800 dark:text-orange-200 mb-2 drop-shadow-xs transition-colors duration-300"
-                >
-                  {service.title}
-                </motion.h3>
-              </div>
-
-              <motion.p
-                variants={textVariants}
-                className="text-gray-600 dark:text-gray-300 text-base leading-relaxed mt-1 relative z-10 transition-colors duration-300"
+                key={i}
+                variants={cardVariants}
+                whileHover={{
+                  scale: 1.05,
+                  rotateY: 5,
+                  transition: { duration: 0.3 },
+                }}
+                className={`relative overflow-hidden rounded-2xl p-6 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 transition-all duration-300 group cursor-pointer`}
+                style={{
+                  boxShadow:
+                    "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+                }}
+                whileHoverStyle={{
+                  boxShadow:
+                    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                }}
               >
-                {service.description}
-              </motion.p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
+                {/* Enhanced decorative elements */}
+                <div className="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-white/20 dark:from-slate-600/20 to-transparent rounded-full blur-xl opacity-40 pointer-events-none z-0" />
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.4 }}
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/0 to-[rgba(255,255,255,0.08)] dark:from-slate-700/0 dark:to-slate-600/10 opacity-0 group-hover:opacity-80 transition-opacity duration-300 z-0"
+                />
+
+                <div className="flex items-center gap-3 relative z-10">
+                  <motion.div
+                    variants={iconVariants}
+                    whileHover={{
+                      rotate: [0, -10, 10, 0],
+                      transition: { duration: 0.5 },
+                    }}
+                    className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${service.color} shadow-md mb-3 border-2 border-white/20 dark:border-slate-700/30 group-hover:scale-110 transition-transform duration-300`}
+                  >
+                    {service.icon}
+                  </motion.div>
+
+                  <motion.h3
+                    variants={textVariants}
+                    className="text-xl font-semibold text-orange-800 dark:text-orange-200 mb-2 drop-shadow-xs transition-colors duration-300"
+                  >
+                    {service.title}
+                  </motion.h3>
+                </div>
+
+                <motion.p
+                  variants={textVariants}
+                  className="text-gray-600 dark:text-gray-300 text-base leading-relaxed mt-1 relative z-10 transition-colors duration-300"
+                >
+                  {service.description}
+                </motion.p>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+    </ScrollFadeIn>
   );
 }
