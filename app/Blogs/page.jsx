@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import toast from "react-hot-toast";
 
 import { useState, useEffect } from "react";
 import {
@@ -63,11 +64,11 @@ const BlogPostsManager = () => {
     try {
       setPublishingPosts((prev) => new Set(prev).add(id));
       const result = await publishPost(id);
-      alert(`Published post: ${result.title}`);
-      fetchPosts(); // Refresh posts after publishing
+      toast.success(`Published post: ${result.title}`);
+      fetchPosts();
     } catch (err) {
       console.error(err);
-      alert("Error publishing post.");
+      toast.error("Error publishing post.");
     } finally {
       setPublishingPosts((prev) => {
         const newSet = new Set(prev);
@@ -84,7 +85,7 @@ const BlogPostsManager = () => {
       );
 
       if (scheduledPosts.length === 0) {
-        alert("No scheduled posts to publish.");
+        toast.success("No scheduled posts to publish.")
         return;
       }
 
@@ -98,12 +99,11 @@ const BlogPostsManager = () => {
       });
 
       if (!res.ok) throw new Error("Failed to publish posts");
-
-      alert("Scheduled posts published!");
-      fetchPosts(); // Refresh posts after publishing
+      toast.error("Scheduled posts published!")
+      fetchPosts(); 
     } catch (error) {
       console.error("Error publishing now:", error);
-      alert("Something went wrong.");
+      toast.error("Something went wrong.")
     } finally {
       setLoading(false);
     }
@@ -547,18 +547,9 @@ const BlogPostsManager = () => {
                         </div>
                         <div className="flex flex-col flex-1 p-6">
                           <div className="flex items-start justify-between mb-3">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-2 flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white break-words w-full">
                               {post.title}
                             </h3>
-                            {!post.coverImage && (
-                              <span
-                                className={`px-2 py-1 text-xs font-medium rounded-full border ml-2 ${getStatusColor(
-                                  post.status
-                                )}`}
-                              >
-                                {post.status}
-                              </span>
-                            )}
                           </div>
 
                           {post.excerpt && (
@@ -681,13 +672,6 @@ const BlogPostsManager = () => {
                             <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                               {post.title}
                             </h3>
-                            <span
-                              className={`px-2 py-1 text-xs font-medium rounded-full border ml-2 ${getStatusColor(
-                                post.status
-                              )}`}
-                            >
-                              {post.status}
-                            </span>
                           </div>
 
                           {post.excerpt && (

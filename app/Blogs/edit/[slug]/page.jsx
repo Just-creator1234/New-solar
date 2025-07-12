@@ -6,6 +6,7 @@ import TagInput from "./TagInput";
 import TiptapEditor from "@/components/TiptapEditor";
 import Image from "next/image";
 import PostPreviewModal from "@/components/PostPreviewModal";
+import toast from "react-hot-toast";
 import {
   ImageOff,
   Loader2,
@@ -107,13 +108,11 @@ export default function EditPostPage() {
         coverImageUrl = url;
         router.refresh();
       } else {
-        alert("Image upload failed.");
+        toast.error("Image upload failed.");
         setSubmitting(false);
         return;
       }
     }
-
-    console.log(post, "hhhhhhhhhhhhhhhhhhhhh");
 
     await updatePost(slug, {
       ...post,
@@ -121,7 +120,8 @@ export default function EditPostPage() {
     });
 
     setSubmitting(false);
-    alert("Post updated successfully!");
+
+    toast("Post updated successfully!");
     router.push("/Blogs"); // Or wherever your blog list is
   };
 

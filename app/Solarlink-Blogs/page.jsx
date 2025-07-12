@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { LikeButton, ViewCounter } from "@/components/Dynamic";
+import { ViewCounter } from "@/components/Dynamic";
 
 import {
   ImageOff,
@@ -439,26 +439,26 @@ const SolarlinkBlogs = () => {
             {regularPosts.map((post) => (
               <article
                 key={post.id}
-                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group  border border-orange-200/50 dark:border-slate-600/50 hover:border-orange-300 dark:hover:border-slate-500"
+                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-orange-200/50 dark:border-slate-600/50 hover:border-orange-300 dark:hover:border-slate-500 transition-all duration-300 group overflow-hidden"
               >
-                <div className="relative overflow-hidden">
-                  <div className="w-full h-48 relative">
-                    {post.coverImage ? (
-                      <Image
-                        src={post.coverImage}
-                        alt={post.altText || post.title || "Post image"}
-                        fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-300 rounded-lg"
-                      />
-                    ) : (
-                      <div className="flex items-center justify-center w-full h-full border border-dashed border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
-                        <ImageOff className="w-8 h-8 text-gray-400 dark:text-gray-500" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="absolute top-4 left-4">
-                    {post.categories?.map((category) => (
+                {/* Image & Overlay */}
+                <div className="relative h-48 overflow-hidden">
+                  {post.coverImage ? (
+                    <Image
+                      src={post.coverImage}
+                      alt={post.altText || post.title || "Post image"}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300 rounded-t-2xl"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center w-full h-full border border-dashed border-gray-300 dark:border-gray-600 rounded-t-2xl bg-gray-50 dark:bg-gray-800">
+                      <ImageOff className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+                    </div>
+                  )}
+
+                  {/* Category badges */}
+                  <div className="absolute top-4 left-4 flex flex-wrap gap-1">
+                    {post.categories?.slice(0, 2).map((category) => (
                       <span
                         key={category.id}
                         className="inline-flex items-center gap-1 px-3 py-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-800 dark:text-gray-200 rounded-full text-xs font-medium border border-white/50 dark:border-slate-600/50"
@@ -467,14 +467,26 @@ const SolarlinkBlogs = () => {
                         {category.name}
                       </span>
                     ))}
+                    {post.categories?.length > 2 && (
+                      <span className="inline-flex items-center px-3 py-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-800 dark:text-gray-200 rounded-full text-xs font-medium border border-white/50 dark:border-slate-600/50">
+                        +{post.categories.length - 2} more
+                      </span>
+                    )}
                   </div>
-                  <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm px-2 py-1 rounded-full">
+
+                  {/* View counter */}
+                  <div className="absolute top-4 right-4">
                     <ViewCounter />
                   </div>
+
+                  {/* Overlay effect */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
 
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  {/* Status + Protection */}
+                  <div className="flex gap-2">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         post.status === "PUBLISHED"
@@ -491,16 +503,19 @@ const SolarlinkBlogs = () => {
                     )}
                   </div>
 
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3 line-clamp-2 group-hover:text-orange-700 dark:group-hover:text-orange-400 transition-colors">
+                  {/* Title */}
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-orange-700 dark:group-hover:text-orange-400 transition-colors">
                     {post.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3 text-sm leading-relaxed">
+                  {/* Excerpt */}
+                  <p className="text-gray-600 dark:text-gray-300 text-sm line-clamp-3 leading-relaxed">
                     {post.excerpt}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    <div className="flex items-center gap-4">
+                  {/* Meta */}
+                  <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+                    <div className="flex gap-4 items-center">
                       <div className="flex items-center gap-1">
                         <div className="w-5 h-5 bg-gradient-to-r from-orange-400 to-blue-400 rounded-full flex items-center justify-center">
                           <User className="w-3 h-3 text-white" />
@@ -514,13 +529,15 @@ const SolarlinkBlogs = () => {
                         </span>
                       </div>
                     </div>
+
                     <div className="flex items-center gap-1">
                       <Coffee className="w-3 h-3 text-blue-500 dark:text-blue-400" />
                       <span>{post.readingTime} min read</span>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-1 mb-4">
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
                     {post.tags?.slice(0, 2).map((tag) => (
                       <span
                         key={tag.id}
@@ -532,16 +549,15 @@ const SolarlinkBlogs = () => {
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between">
-                    <button className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-medium text-sm hover:text-orange-700 dark:hover:text-orange-300 transition-colors">
-                      <Link
-                        href={`/Solarlink-Blogs/${post.slug}`}
-                        className="flex items-center gap-2"
-                      >
-                        <BookOpen className="w-4 h-4" />
-                        Read More
-                      </Link>
-                    </button>
+                  {/* Action */}
+                  <div className="flex items-center justify-between mt-2">
+                    <Link
+                      href={`/Solarlink-Blogs/${post.slug}`}
+                      className="flex items-center gap-2 text-orange-600 dark:text-orange-400 font-medium text-sm hover:text-orange-700 dark:hover:text-orange-300 transition-colors"
+                    >
+                      <BookOpen className="w-4 h-4" />
+                      Read More
+                    </Link>
                     <ArrowRight className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:translate-x-1 transition-all" />
                   </div>
                 </div>

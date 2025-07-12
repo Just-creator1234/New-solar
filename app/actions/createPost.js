@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 export async function createPost(formData) {
   try {
     // 🔐 Secret check
-    
 
     const data = {
       title: formData.get("title"),
@@ -93,7 +92,7 @@ export async function createPost(formData) {
         post: updatedPost,
         message: `Post ${
           data.status === "PUBLISHED" ? "published" : "saved"
-        } successfully!`,
+        } successfully, Redirecting...`,
       };
     }
   } catch (error) {

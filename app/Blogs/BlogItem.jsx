@@ -2,7 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { Trash2 } from "lucide-react";
-import { deletePostById } from "@/app/actions/deletePost"; // server action
+import { deletePostById } from "@/app/actions/deletePost";
+import toast from "react-hot-toast";
 
 export default function BlogItem({ post, onPostUpdated }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function BlogItem({ post, onPostUpdated }) {
         onPostUpdated(); // triggers refresh without blocking UI
       });
     } else {
-      alert("Failed to delete post.");
+      toast.error("Failed to delete post.");
     }
   };
 

@@ -67,6 +67,50 @@
   
 }
 
+@layer utilities {
+.toast-wrapper {
+  background: linear-gradient(135deg, var(--color-home-warm-100), var(--color-sunlink-orange-100));
+  color: var(--color-sky-light-900);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.toast-success {
+  background: linear-gradient(135deg, var(--color-sunlink-orange-100), var(--color-sunlink-orange-200));
+  border-left: 6px solid var(--color-sunlink-orange-500);
+  color: var(--color-sunlink-orange-900);
+  box-shadow: 0 0 8px var(--color-sunlink-orange-300);
+}
+
+.toast-error {
+  background: linear-gradient(135deg, var(--color-sunlink-blue-100), var(--color-sunlink-blue-200));
+  border-left: 6px solid var(--color-sunlink-blue-500);
+  color: var(--color-sunlink-blue-900);
+  box-shadow: 0 0 8px var(--color-sunlink-blue-300);
+}
+
+.dark .toast-wrapper {
+  background: linear-gradient(135deg, var(--color-sky-light-900), var(--color-sunlink-orange-700));
+  color: var(--color-sky-light-100);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.dark .toast-success {
+  background: linear-gradient(135deg, var(--color-sunlink-orange-600), var(--color-sunlink-orange-700));
+  border-left: 6px solid var(--color-sunlink-orange-300);
+  color: var(--color-home-warm-100);
+  box-shadow: 0 0 10px var(--color-sunlink-orange-400);
+}
+
+.dark .toast-error {
+  background: linear-gradient(135deg, var(--color-sunlink-blue-600), var(--color-sunlink-blue-700));
+  border-left: 6px solid var(--color-sunlink-blue-300);
+  color: var(--color-home-warm-100);
+  box-shadow: 0 0 10px var(--color-sunlink-blue-400);
+}
+
+
+}
+
 @keyframes light-ray-1 {
   0% {
     transform: rotate(45deg) scale(1) translateX(-50%);

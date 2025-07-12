@@ -1,6 +1,7 @@
 import NavbarNew from "@/components/NavbarNew";
 import Footer from "@/components/Footer";
 import ClientRouteProtector from "@/components/ClientRouteProtector";
+import { ToasterProvider } from "@/components/ToasterProvider";
 
 export default async function PostsLayout({ children }) {
   return (
@@ -8,6 +9,7 @@ export default async function PostsLayout({ children }) {
       <NavbarNew />
       <main>
         <ClientRouteProtector>{children}</ClientRouteProtector>
+          <ToasterProvider />
       </main>
       <Footer />
     </div>

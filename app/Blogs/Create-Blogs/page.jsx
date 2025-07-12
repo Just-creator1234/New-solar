@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import PostPreviewModal from "../../../components/PostPreviewModal";
 import TiptapEditor from "@/components/TiptapEditor";
 import Image from "next/image";
+import { autoSavePost } from "@/app/actions/autoSavePost";
+import toast from "react-hot-toast";
 
 import {
   FiBold,
@@ -79,6 +81,7 @@ export default function EnhancedCreatePostPage() {
   const [metaDescription, setMetaDescription] = useState("");
   const [focusKeyword, setFocusKeyword] = useState("");
   const [loading, setLoading] = useState(true);
+  const [draftId, setDraftId] = useState(null);
 
   // Validation state
   const [validationErrors, setValidationErrors] = useState({});
@@ -112,6 +115,32 @@ export default function EnhancedCreatePostPage() {
     autoSave ? setLastSaved : undefined // ✅ update lastSaved if enabled
   );
 
+  // async function handleAutoSave() {
+  //   const formData = new FormData();
+  //   formData.append("title", title);
+  //   formData.append("slug", slug);
+  //   formData.append("content", content);
+  //   formData.append("excerpt", excerpt);
+  //   formData.append("metaTitle", metaTitle);
+  //   formData.append("metaDescription", metaDescription);
+  //   formData.append("focusKeyword", focusKeyword);
+  //   formData.append("categories", JSON.stringify(selectedCategories));
+  //   formData.append("tags", JSON.stringify(tags.map((t) => t.name)));
+
+  //   // Optional: add coverImage if needed
+  //   if (coverImageFile) formData.append("image", coverImageFile);
+
+  //   if (draftId) {
+  //     formData.append("id", draftId); // Only add if it's a real value (e.g. "abc123")
+  //   }
+
+  //   const response = await saveDraft(formData);
+
+  //   if (response?.id && !draftId) {
+  //     setDraftId(response.id); // 👈 Save draft ID after first save
+  //   }
+  // }
+
   async function handleAutoSave() {
     const formData = new FormData();
     formData.append("title", title);
@@ -124,10 +153,21 @@ export default function EnhancedCreatePostPage() {
     formData.append("categories", JSON.stringify(selectedCategories));
     formData.append("tags", JSON.stringify(tags.map((t) => t.name)));
 
-    // Optional: add coverImage if needed
-    if (coverImageFile) formData.append("image", coverImageFile);
+    if (coverImageFile) {
+      formData.append("image", coverImageFile);
+    }
 
-    await saveDraft(formData);
+    if (draftId) {
+      formData.append("id", draftId); // ✅ only if this exists
+    }
+
+    // ✅ use autoSavePost instead of saveDraft
+    const response = await autoSavePost(formData);
+
+    // ✅ store the draftId if this is the first save
+    if (response?.post?.id && !draftId) {
+      setDraftId(response.post.id);
+    }
   }
 
   const handleDeleteCategory = async (id) => {
@@ -238,13 +278,14 @@ export default function EnhancedCreatePostPage() {
           const { url } = await uploadRes.json();
           coverImageUrl = url;
         } else {
-          alert("Image upload failed.");
+          toast.error("Image upload failed.");
           setIsSubmitting(false);
           return;
         }
       } catch (error) {
         console.error("Image upload error:", error);
-        alert("Unable to upload image.");
+        toast.error("Unable to upload image.");
+
         setIsSubmitting(false);
         return;
       }
@@ -270,9 +311,9 @@ export default function EnhancedCreatePostPage() {
       const result = await saveDraft(formData);
       if (result.success) {
         router.push("/Blogs");
-        alert("Draft saved successfully!");
+        toast.success("Draft saved successfully!");
       } else {
-        alert("Failed to save draft.");
+        toast.error("Failed to save draft.");
       }
     } catch (error) {
       console.error("Draft save error:", error);
@@ -347,7 +388,8 @@ export default function EnhancedCreatePostPage() {
 
   const handleSubmit = async (action) => {
     if (!validateForm()) {
-      alert("Please fix the validation errors before publishing.");
+      toast.error("Please fix the validation errors before publishing.");
+
       return;
     }
 
@@ -375,13 +417,13 @@ export default function EnhancedCreatePostPage() {
           const { url } = await uploadRes.json();
           coverImageUrl = url;
         } else {
-          alert("Image upload failed.");
+          toast.error("Image upload failed.");
           setIsSubmitting(false);
           return;
         }
       } catch (error) {
         console.error("Image upload error:", error);
-        alert("Unable to upload image.");
+        toast.error("Unable to upload image.");
         setIsSubmitting(false);
         return;
       }
@@ -413,8 +455,14 @@ export default function EnhancedCreatePostPage() {
     }
 
     try {
-      await createPost(formData);
-      router.push("/Blogs");
+      const res = await createPost(formData);
+
+      if (res?.success) {
+        toast.success(res.message || "Blog created. Redirecting...");
+        router.push("/Blogs");
+      } else {
+        toast.error(res?.message || "Failed to create blog.");
+      }
 
       // Reset form state
       setTitle("");
@@ -428,7 +476,7 @@ export default function EnhancedCreatePostPage() {
       setAltText("");
     } catch (err) {
       console.error(err);
-      alert("Failed to save post.");
+      toast.error("Failed to save post.");
     } finally {
       setIsSubmitting(false);
     }

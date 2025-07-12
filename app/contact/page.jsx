@@ -237,7 +237,9 @@ const ContactPage = () => {
         }
       `}</style>
 
-      <LiveMap />
+      <div className="mb-10">
+        <LiveMap />
+      </div>
       <Footer />
     </div>
   );
