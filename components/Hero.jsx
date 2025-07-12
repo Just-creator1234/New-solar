@@ -352,7 +352,9 @@ export default function DiagonalHeroSection() {
             </p>
             <div className="flex flex-col gap-4 pt-4">
               <button className="group relative px-8 py-4 rounded-2xl font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 shadow-lg hover:scale-105 hover:shadow-xl transition-all">
-                <span className="relative z-10">Get Free Quote</span>
+                <a href="#product-showcase" className="relative z-10">
+                  Our Product
+                </a>
               </button>
               <button className="group px-8 py-4 rounded-2xl font-semibold border-2 border-orange-500 text-orange-600 dark:text-orange-400 dark:border-orange-600 bg-orange-100/20 dark:bg-orange-900/10 hover:scale-105 hover:shadow-md transition-all">
                 Learn More →
