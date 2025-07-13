@@ -145,8 +145,8 @@ const ContactPage = () => {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-6 pb-16">
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+      <main className="relative z-10 container mx-auto px-6 pb-16 max-sm:px-2">
+        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto  ">
           {/* Contact Information */}
           <div className="space-y-8">
             <div className="rounded-2xl p-8 shadow-lg backdrop-blur-sm bg-orange-50 dark:bg-slate-800/90 border border-orange-100 dark:border-slate-700">

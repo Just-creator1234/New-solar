@@ -168,22 +168,14 @@ const SolarlinkBlogs = () => {
             {/* Search and Filter Bar */}
             <div className="flex flex-col items-center justify-center gap-6 mt-12 mb-12 max-w-4xl mx-auto">
               {/* Search Bar */}
-              <div className="relative w-full max-w-2xl">
-                <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
-                  <Search className="w-5 h-5" />
-                </div>
+              <div className="relative w-full max-w-2xl flex justify-center items-center">
                 <input
                   type="text"
                   placeholder="Search for articles, topics, or keywords..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 rounded-2xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-lg shadow-lg hover:shadow-xl"
+                  className="w-full pl-12 max-sm:px-2 py-4 rounded-2xl border-2 border-orange-200/50 dark:border-slate-600/50 focus:border-orange-400 dark:focus:border-orange-500 focus:outline-none focus:ring-4 focus:ring-orange-400/20 dark:focus:ring-orange-500/20 transition-all duration-300 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-lg shadow-lg hover:shadow-xl"
                 />
-                <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                  <div className="px-3 py-1 bg-gradient-to-r from-orange-100 to-blue-100 dark:from-slate-700 dark:to-slate-600 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300">
-                    Press Enter
-                  </div>
-                </div>
               </div>
 
               {/* Filter Section */}
