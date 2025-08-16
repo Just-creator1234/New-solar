@@ -116,32 +116,6 @@ export default function EnhancedCreatePostPage() {
     autoSave ? setLastSaved : undefined // ✅ update lastSaved if enabled
   );
 
-  // async function handleAutoSave() {
-  //   const formData = new FormData();
-  //   formData.append("title", title);
-  //   formData.append("slug", slug);
-  //   formData.append("content", content);
-  //   formData.append("excerpt", excerpt);
-  //   formData.append("metaTitle", metaTitle);
-  //   formData.append("metaDescription", metaDescription);
-  //   formData.append("focusKeyword", focusKeyword);
-  //   formData.append("categories", JSON.stringify(selectedCategories));
-  //   formData.append("tags", JSON.stringify(tags.map((t) => t.name)));
-
-  //   // Optional: add coverImage if needed
-  //   if (coverImageFile) formData.append("image", coverImageFile);
-
-  //   if (draftId) {
-  //     formData.append("id", draftId); // Only add if it's a real value (e.g. "abc123")
-  //   }
-
-  //   const response = await saveDraft(formData);
-
-  //   if (response?.id && !draftId) {
-  //     setDraftId(response.id); // 👈 Save draft ID after first save
-  //   }
-  // }
-
   async function handleAutoSave() {
     const formData = new FormData();
     formData.append("title", title);
@@ -170,29 +144,6 @@ export default function EnhancedCreatePostPage() {
       setDraftId(response.post.id);
     }
   }
-
-  // const handleDeleteCategory = async (id) => {
-  //   try {
-  //     const res = await fetch(`/api/categories/${id}`, {
-  //       method: "DELETE",
-  //     });
-
-  //     if (!res.ok) {
-  //       const errorData = await res.json(); // get message from API
-  //       throw new Error(errorData.message || "Failed to delete category");
-  //     }
-
-  //     // Remove from local state if successful
-  //     setCategories((prev) => prev.filter((cat) => cat.id !== id));
-  //     setValidationErrors({}); // clear previous errors
-  //   } catch (error) {
-  //     // Set the error in validationErrors
-  //     setValidationErrors((prev) => ({
-  //       ...prev,
-  //       deleteCategory: error.message,
-  //     }));
-  //   }
-  // };
 
   const handleDeleteCategory = async (id) => {
     try {

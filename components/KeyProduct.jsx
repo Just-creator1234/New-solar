@@ -531,7 +531,7 @@ const KeyProduct = () => {
                   }}
                 >
                   <img
-                    src="/IMAGE2.jpg"
+                    src="/IMAGE4.jpg"
                     alt="Key Solar Light Product"
                     className="w-full h-96 lg:h-[600px] object-cover transition-transform duration-700 group-hover:scale-110"
                   />
